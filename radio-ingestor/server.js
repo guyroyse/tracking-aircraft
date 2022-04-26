@@ -22,6 +22,6 @@ sbs1Client.on('message', msg => {
   }
 
   redisClient.xAdd(streamKey, '*', msg, { TRIM: trimOptions })
-  redisClient.xAdd(`${streamKey}:${aircraftId}`, '*', msg)
+  redisClient.xAdd(`${streamKey}:${aircraftId}`, '*', msg, { TRIM: trimOptions })
   redisClient.sAdd(`${streamKey}:aircraft`, aircraftId)
 })

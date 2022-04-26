@@ -1,0 +1,12 @@
+{
+  "name": "document-consumer",
+  "version": "1.0.0",
+  "type": "module",
+  "author": "Guy Royse <guy@guyroyse.com> (http://guyroyse.com/)",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "redis": "^4.0.6",
+    "redis-om": "^0.2.1"
+  }
+}
