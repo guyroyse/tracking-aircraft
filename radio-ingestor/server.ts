@@ -26,7 +26,13 @@ sbs1Client.on('message', (msg: Message) => {
       strategyModifier: '~',
       threshold: minId
     }
-  })
-  redisClient.xAdd(`${streamKey}:${aircraftId}`, '*', <any>msg)
-  redisClient.sAdd(`${streamKey}:aircraft`, aircraftId)
+  });
+  redisClient.xAdd(`${streamKey}:${aircraftId}`, '*', <any>msg, {
+    TRIM: {
+      strategy: 'MINID',
+      strategyModifier: '~',
+      threshold: minId
+    }
+  });
+  redisClient.sAdd(`${streamKey}:aircraft`, aircraftId);
 })
