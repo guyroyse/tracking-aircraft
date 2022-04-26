@@ -4,7 +4,7 @@ import * as redis from 'redis'
 
 const host = process.env['DUMP_1090_HOST']
 const port = Number(process.env['DUMP_1090_PORT'])
-const streamKey = process.env['STREAM_KEY'] ?? 'radio:1'
+const streamKey = process.env['STREAM_KEY']
 
 const sbs1Client = sbs1.createClient({ host, port })
 const redisClient = redis.createClient()
