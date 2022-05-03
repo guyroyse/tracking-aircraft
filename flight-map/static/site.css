@@ -1,0 +1,15 @@
+#map {
+  height: 720px;
+  width: 1280px;
+}
+
+.plane-icon {
+  height: 16px;
+  width: 16px;
+  background-size: 16px 16px;
+  background-image: url('aeroplane.png');
+}
+
+.effort {
+  display: none
+}
