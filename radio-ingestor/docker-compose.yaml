@@ -1,0 +1,10 @@
+services:
+  radio-ingestor:
+    build: .
+    environment:
+      - SBS1_SOURCE_HOST=host.docker.internal
+      - SBS1_SOURCE_PORT=30003
+      - REDIS_HOST=redis-12410.c57.us-east-1-4.ec2.cloud.redislabs.com
+      - REDIS_PORT=12410
+      - REDIS_PASSWORD
+      - STREAM_KEY=radio:1

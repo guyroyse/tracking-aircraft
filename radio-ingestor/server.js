@@ -61,15 +61,7 @@ sbs1Client.on('message', msg => {
     event.onGround = Boolean(msg.is_on_ground)
   }
 
-  if (msg.transmission_type === 5) {
-    event.altitude = msg.altitude
-  }
-
-  if (msg.transmission_type === 6) {
-    console.log(msg)
-  }
-
-  if (msg.transmission_type === 7) {
+  if (msg.transmission_type === 5 || msg.transmission_type === 7) {
     event.altitude = msg.altitude
   }
 
