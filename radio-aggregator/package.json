@@ -1,0 +1,10 @@
+{
+  "name": "radio-aggregator",
+  "version": "1.0.0",
+  "type": "module",
+  "author": "Guy Royse <guy@guyroyse.com> (http://guyroyse.com/)",
+  "license": "MIT",
+  "dependencies": {
+    "redis": "4.0.6"
+  }
+}
