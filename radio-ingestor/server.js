@@ -71,6 +71,8 @@ sbs1Client.on('message', msg => {
   const thirtyMinutes = 30 * 60 * 1000
   const minId = new Date().getTime() - thirtyMinutes
 
+  console.log(event.loggedDateTime)
+
   redisClient.xAdd(
     streamKey, '*', event, {
       TRIM: {
@@ -82,5 +84,7 @@ sbs1Client.on('message', msg => {
 })
 
 function toEpochMilliseconds(dateString, timeString) {
-  return new Date(`${dateString.replaceAll('/', '-')}T${timeString}`).getTime()
+  const offset = new Date().getTimezoneOffset() * 60 * 1000
+  const date = new Date(`${dateString.replaceAll('/', '-')}T${timeString}`)
+  return date.getTime() - offset
 }
