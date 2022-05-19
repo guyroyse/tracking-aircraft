@@ -78,8 +78,8 @@ sbs1Client.on('message', msg => {
     event.onGround = Boolean(msg.is_on_ground)
   }
 
-  const thirtyMinutes = 30 * 60 * 1000
-  const minId = new Date().getTime() - thirtyMinutes
+  const thirtyHours = 30 * 60 * 60 * 1000
+  const minId = new Date().getTime() - thirtyHours
   const id = `${eventMilliseconds}-${eventSequence}`
 
   redisClient.xAdd(
