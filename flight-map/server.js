@@ -3,11 +3,20 @@ import 'dotenv/config'
 import * as redis from 'redis'
 import express from 'express'
 
+const redisHost = process.env['REDIS_HOST'] ?? 'localhost'
+const redisPort = Number(process.env['REDIS_PORT'] ?? 6379)
+const redisPassword = process.env['REDIS_PASSWORD']
+
+
 const streamKey = process.env['STREAM_KEY']
 
-const redisClient = redis.createClient()
+const redisClient = redis.createClient({
+  socket: { host: redisHost, port: redisPort },
+  password: redisPassword })
+
 redisClient.on('error', (err) => console.log('Redis Client Error', err))
 await redisClient.connect()
+
 
 const app = new express()
 app.use(express.json())

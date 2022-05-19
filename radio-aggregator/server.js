@@ -29,7 +29,8 @@ while (true) {
     const message = result.messages[0].message
     message.radio = key
 
-    currentKeysAndIds.find(current => current.key === key).id = id
+    const index = currentKeysAndIds.findIndex(current => current.key === key)
+    currentKeysAndIds[index].id = id
 
     const thirtyMinutes = 30 * 60 * 1000
     const minId = new Date().getTime() - thirtyMinutes

@@ -6,19 +6,19 @@ const mechanical_birds = {}
 
 eventSource.onmessage = e => {
   const message = JSON.parse(e.data)
-  const aircraft = mechanical_birds[message.hex_ident] ?? {}
-  mechanical_birds[message.hex_ident] = aircraft
+  const aircraft = mechanical_birds[message.icacoId] ?? {}
+  mechanical_birds[message.icacoId] = aircraft
 
-  aircraft.hex_ident = message.hex_ident
+  aircraft.icacoId = message.icacoId
   if (message.callsign) aircraft.callsign = message.callsign.trim()
   if (message.altitude) aircraft.altitude = Number(message.altitude)
-  if (message.ground_speed) aircraft.ground_speed = Number(message.ground_speed)
-  if (message.track) aircraft.track = Number(message.track)
-  if (message.lat && message.lon) {
-    aircraft.latlon = { latitude: Number(message.lat), longitude: Number(message.lon) }
+  if (message.velcoity) aircraft.velcoity = Number(message.velcoity)
+  if (message.heading) aircraft.heading = Number(message.heading)
+  if (message.latitude && message.longitude) {
+    aircraft.latlon = { latitude: Number(message.latitude), longitude: Number(message.longitude) }
   }
 
-  console.log(aircraft)
+  console.log(message)
 
   if (aircraft.latlon) {
     setMarker(aircraft)
@@ -30,7 +30,7 @@ function setMarker(aircraft) {
     if (!aircraft.marker) {
         const myDiv = document.createElement('div')
         document.getElementById('icon-holder').appendChild(myDiv)
-        myDiv.className = `${aircraft.hex_ident} plane-icon`
+        myDiv.className = `${aircraft.icacoId} plane-icon`
 
         const planeIcon = L.divIcon({html: myDiv})
 
@@ -39,8 +39,8 @@ function setMarker(aircraft) {
     }
 
     // Set rotation (if we have data)
-    if (aircraft.track) {
-      aircraft.icon.style = `transform: rotate(${aircraft.track}deg);`
+    if (aircraft.heading) {
+      aircraft.icon.style = `transform: rotate(${aircraft.heading}deg);`
     }
 
     aircraft.marker.setLatLng([aircraft.latlon.latitude, aircraft.latlon.longitude])
