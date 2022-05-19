@@ -1,4 +1,3 @@
-import 'dotenv/config'
 import * as sbs1 from 'sbs1'
 import * as redis from 'redis'
 
@@ -69,14 +68,19 @@ sbs1Client.on('message', msg => {
     event.onGround = Boolean(msg.is_on_ground)
   }
 
-  const minId = new Date().getTime() - 30 * 60 * 1000
-  const trimOptions = {
-    strategy: 'MINID',
-    strategyModifier: '~',
-    threshold: minId
-  }
+  const thirtyMinutes = 30 * 60 * 1000
+  const minId = new Date().getTime() - thirtyMinutes
 
-  redisClient.xAdd(streamKey, '*', event, { TRIM: trimOptions })
+  redisClient.set('foo', minId)
+
+  redisClient.xAdd(
+    streamKey, '*', event, {
+      TRIM: {
+        strategy: 'MINID',
+        strategyModifier: '~',
+        threshold: minId
+      }
+    })
 })
 
 function toEpochMilliseconds(dateString, timeString) {
