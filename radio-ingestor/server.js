@@ -28,9 +28,6 @@ const transmissionTypes = [
   'ALL_CALL_REPLY'
 ]
 
-let eventMilliseconds = 0
-let eventSequence = 0
-
 sbs1Client.on('message', msg => {
 
   let event = {}
@@ -39,13 +36,6 @@ sbs1Client.on('message', msg => {
   event.type = transmissionTypes[msg.transmission_type - 1]
   event.generatedDateTime = toEpochMilliseconds(msg.generated_date, msg.generated_time)
   event.loggedDateTime = toEpochMilliseconds(msg.logged_date, msg.logged_time)
-
-  if (event.loggedDateTime > eventMilliseconds) {
-    eventMilliseconds = event.loggedDateTime
-    eventSequence = 0
-  } else if (event.loggedDateTime === eventMilliseconds) {
-    eventSequence++
-  }
 
   if (msg.transmission_type === 1) {
     event.callsign = msg.callsign.trim()
@@ -78,12 +68,11 @@ sbs1Client.on('message', msg => {
     event.onGround = Boolean(msg.is_on_ground)
   }
 
-  const thirtyHours = 30 * 60 * 60 * 1000
-  const minId = new Date().getTime() - thirtyHours
-  const id = `${eventMilliseconds}-${eventSequence}`
+  const thirtyMinutes = 30 * 60 * 1000
+  const minId = new Date().getTime() - thirtyMinutes
 
   redisClient.xAdd(
-    streamKey, id, event, {
+    streamKey, '*', event, {
       TRIM: {
         strategy: 'MINID',
         strategyModifier: '~',
