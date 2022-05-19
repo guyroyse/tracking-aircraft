@@ -71,8 +71,6 @@ sbs1Client.on('message', msg => {
   const thirtyMinutes = 30 * 60 * 1000
   const minId = new Date().getTime() - thirtyMinutes
 
-  redisClient.set('foo', minId)
-
   redisClient.xAdd(
     streamKey, '*', event, {
       TRIM: {
