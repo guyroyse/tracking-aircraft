@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 import * as sbs1 from 'sbs1'
 import * as redis from 'redis'
 
@@ -34,39 +36,17 @@ sbs1Client.on('message', msg => {
 
   event.icacoId = msg.hex_ident
   event.type = transmissionTypes[msg.transmission_type - 1]
-  event.generatedDateTime = toEpochMilliseconds(msg.generated_date, msg.generated_time)
-  event.loggedDateTime = toEpochMilliseconds(msg.logged_date, msg.logged_time)
+  event.generatedDateTime = toEpochMilliseconds(msg.generated_date, msg.generated_time).toString()
+  event.loggedDateTime = toEpochMilliseconds(msg.logged_date, msg.logged_time).toString()
 
-  if (msg.transmission_type === 1) {
-    event.callsign = msg.callsign.trim()
-    event.onGround = Boolean(msg.is_on_ground)
-  }
-
-  if (msg.transmission_type === 2) {
-    console.log(msg)
-  }
-
-  if (msg.transmission_type === 3) {
-    event.altitude = msg.altitude
-    event.latitude = msg.lat
-    event.longitude = msg.lon
-    event.onGround = Boolean(msg.is_on_ground)
-  }
-
-  if (msg.transmission_type === 4) {
-    event.velcoity = msg.ground_speed
-    event.heading = msg.track
-    event.climb = msg.vertical_rate
-    event.onGround = Boolean(msg.is_on_ground)
-  }
-
-  if (msg.transmission_type === 5 || msg.transmission_type === 7) {
-    event.altitude = msg.altitude
-  }
-
-  if (msg.transmission_type === 8) {
-    event.onGround = Boolean(msg.is_on_ground)
-  }
+  if (msg.callsign !== null) event.callsign = msg.callsign.trim()
+  if (msg.altitude !== null) event.altitude = msg.altitude.toString()
+  if (msg.lat !== null) event.latitude = msg.lat.toString()
+  if (msg.lon !== null) event.longitude = msg.lon.toString()
+  if (msg.ground_speed !== null) event.velcoity = msg.ground_speed.toString()
+  if (msg.track !== null) event.heading = msg.track.toString()
+  if (msg.vertical_rate !== null) event.climb = msg.vertical_rate.toString()
+  if (msg.is_on_ground !== null) event.onGround = msg.is_on_ground.toString()
 
   const thirtyMinutes = 30 * 60 * 1000
   const minId = new Date().getTime() - thirtyMinutes
