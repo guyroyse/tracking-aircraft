@@ -8,3 +8,4 @@ services:
       - REDIS_PORT
       - REDIS_PASSWORD
       - STREAM_KEY
+      - STREAM_KEY_SET

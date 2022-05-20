@@ -10,8 +10,9 @@ const redisPort = Number(process.env['REDIS_PORT'] ?? 6379)
 const redisPassword = process.env['REDIS_PASSWORD']
 
 const streamKey = process.env['STREAM_KEY']
+const streamKeySet = process.env['STREAM_KEY_SET'] ?? 'radios'
 
-const sbs1Client = sbs1.createClient({ host: sbs1Host, port: sbs1Port })
+// connect to Redis
 const redisClient = redis.createClient({
   socket: { host: redisHost, port: redisPort },
   password: redisPassword })
@@ -19,44 +20,47 @@ const redisClient = redis.createClient({
 redisClient.on('error', (err) => console.log('Redis Client Error', err))
 await redisClient.connect()
 
-const transmissionTypes = [
-  'ES_IDENT_AND_CATEGORY',
-  'ES_SURFACE_POS',
-  'ES_AIRBORNE_POS',
-  'ES_AIRBORNE_VEL',
-  'SURVEILLANCE_ALT',
-  'SURVEILLANCE_ID',
-  'AIR_TO_AIR',
-  'ALL_CALL_REPLY'
-]
+// add the stream key to a set for later aggregation
+redisClient.sAdd(streamKeySet, streamKey)
 
+// connect to SBS1 source
+const sbs1Client = sbs1.createClient({ host: sbs1Host, port: sbs1Port })
+
+// wait for messages from the SBS1 source
 sbs1Client.on('message', msg => {
 
-  let event = {}
+  // create the event
+  const event = {
+    icacoId: msg.hex_ident,
+    type: toTransmissionType(msg.transmission_type),
+    generatedDateTime: toEpochMilliseconds(msg.generated_date, msg.generated_time).toString(),
+    loggedDateTime: toEpochMilliseconds(msg.logged_date, msg.logged_time).toString()
+  }
 
-  event.icacoId = msg.hex_ident
-  event.type = transmissionTypes[msg.transmission_type - 1]
-  event.generatedDateTime = toEpochMilliseconds(msg.generated_date, msg.generated_time).toString()
-  event.loggedDateTime = toEpochMilliseconds(msg.logged_date, msg.logged_time).toString()
-
+  // add fields that might be in the message
   if (msg.callsign !== null) event.callsign = msg.callsign.trim()
   if (msg.altitude !== null) event.altitude = msg.altitude.toString()
   if (msg.lat !== null) event.latitude = msg.lat.toString()
   if (msg.lon !== null) event.longitude = msg.lon.toString()
-  if (msg.ground_speed !== null) event.velcoity = msg.ground_speed.toString()
+  if (msg.ground_speed !== null) event.velocity = msg.ground_speed.toString()
   if (msg.track !== null) event.heading = msg.track.toString()
   if (msg.vertical_rate !== null) event.climb = msg.vertical_rate.toString()
   if (msg.is_on_ground !== null) event.onGround = msg.is_on_ground.toString()
 
-  const thirtyMinutes = 30 * 60 * 1000
-  const minId = new Date().getTime() - thirtyMinutes
+  // log the event so it looks like the service does something
+  console.log(event)
 
+  // find thirty minutes ago
+  const thirtyMinutes = 30 * 60 * 1000
+  const thirtyMinutesAgo = new Date().getTime() - thirtyMinutes
+
+  // add the event to the stream, expiring old events
   redisClient.xAdd(
     streamKey, '*', event, {
       TRIM: {
         strategy: 'MINID',
         strategyModifier: '~',
-        threshold: minId
+        threshold: thirtyMinutesAgo
       }
     })
 })
@@ -65,4 +69,17 @@ function toEpochMilliseconds(dateString, timeString) {
   const offset = new Date().getTimezoneOffset() * 60 * 1000
   const date = new Date(`${dateString.replaceAll('/', '-')}T${timeString}`)
   return date.getTime() - offset
+}
+
+function toTransmissionType(type) {
+  return [
+    'ES_IDENT_AND_CATEGORY',
+    'ES_SURFACE_POS',
+    'ES_AIRBORNE_POS',
+    'ES_AIRBORNE_VEL',
+    'SURVEILLANCE_ALT',
+    'SURVEILLANCE_ID',
+    'AIR_TO_AIR',
+    'ALL_CALL_REPLY'
+  ][type - 1]
 }
