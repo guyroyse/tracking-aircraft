@@ -10,9 +10,9 @@ const redisHost = process.env['REDIS_HOST'] ?? 'localhost'
 const redisPort = Number(process.env['REDIS_PORT'] ?? 6379)
 const redisPassword = process.env['REDIS_PASSWORD']
 
-const streamLifetime = Number(process.env['STREAM_LIFETIME'] ?? 3600)
-const streamKey = process.env['STREAM_KEY']
-const streamKeySet = process.env['STREAM_KEY_SET'] ?? 'radios'
+const ingestorStreamLifetime = Number(process.env['INGESTOR_STREAM_LIFETIME'] ?? 3600)
+const ingestorStreamKey = process.env['INGESTOR_STREAM_KEY']
+const ingestorStreamKeysKey = process.env['INGESTOR_STREAM_KEYS_KEY'] ?? 'radios'
 
 // connect to Redis
 const redisClient = redis.createClient({
@@ -23,7 +23,7 @@ redisClient.on('error', (err) => console.log('Redis Client Error', err))
 await redisClient.connect()
 
 // add the stream key to a set for later aggregation
-redisClient.sAdd(streamKeySet, streamKey)
+redisClient.sAdd(ingestorStreamKeysKey, ingestorStreamKey)
 
 // connect to SBS1 source and await messages
 const sbs1Client = sbs1.createClient({ host: sbs1Host, port: sbs1Port })
@@ -51,11 +51,11 @@ sbs1Client.on('message', msg => {
   console.log(event)
 
   // find oldest event id to keep
-  const oldestEventId = new Date().getTime() - streamLifetime * 1000
+  const oldestEventId = new Date().getTime() - ingestorStreamLifetime * 1000
 
   // add the event to the stream, expiring old events
   redisClient.xAdd(
-    streamKey, '*', event, {
+    ingestorStreamKey, '*', event, {
       TRIM: {
         strategy: 'MINID',
         strategyModifier: '~',
