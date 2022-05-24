@@ -5,10 +5,12 @@ import * as redis from 'redis'
 
 const sbs1Host = process.env['SBS1_SOURCE_HOST'] ?? 'localhost'
 const sbs1Port = Number(process.env['SBS1_SOURCE_PORT'] ?? 30003)
+
 const redisHost = process.env['REDIS_HOST'] ?? 'localhost'
 const redisPort = Number(process.env['REDIS_PORT'] ?? 6379)
 const redisPassword = process.env['REDIS_PASSWORD']
 
+const streamLifetime = Number(process.env['STREAM_LIFETIME'] ?? 3600)
 const streamKey = process.env['STREAM_KEY']
 const streamKeySet = process.env['STREAM_KEY_SET'] ?? 'radios'
 
@@ -23,10 +25,8 @@ await redisClient.connect()
 // add the stream key to a set for later aggregation
 redisClient.sAdd(streamKeySet, streamKey)
 
-// connect to SBS1 source
+// connect to SBS1 source and await messages
 const sbs1Client = sbs1.createClient({ host: sbs1Host, port: sbs1Port })
-
-// wait for messages from the SBS1 source
 sbs1Client.on('message', msg => {
 
   // create the event
@@ -50,9 +50,8 @@ sbs1Client.on('message', msg => {
   // log the event so it looks like the service does something
   console.log(event)
 
-  // find thirty minutes ago
-  const thirtyMinutes = 30 * 60 * 1000
-  const thirtyMinutesAgo = new Date().getTime() - thirtyMinutes
+  // find oldest event id to keep
+  const oldestEventId = new Date().getTime() - streamLifetime * 1000
 
   // add the event to the stream, expiring old events
   redisClient.xAdd(
@@ -60,7 +59,7 @@ sbs1Client.on('message', msg => {
       TRIM: {
         strategy: 'MINID',
         strategyModifier: '~',
-        threshold: thirtyMinutesAgo
+        threshold: oldestEventId
       }
     })
 })
