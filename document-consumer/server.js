@@ -1,63 +1,74 @@
 import 'dotenv/config'
-import * as redis from 'redis'
-import { Client, Entity, Schema } from 'redis-om'
 
-const streamKey = process.env['STREAM_KEY']
+import { aircraftRepository } from './om/aircraft-status.js'
+import { redisClient } from './om/client.js'
 
-const redisClient = redis.createClient()
-redisClient.on('error', (err) => console.log('Redis Client Error', err))
-await redisClient.connect()
+// get the key with all the flight data in it
+const aggregateStreamKey = process.env['AGGREGATE_STREAM_KEY'] ?? 'radio:all'
 
-const omClient = await new Client().use(redisClient)
+// start from the begining, we'll filter out old events
+let currentId = '0-0'
 
-class AircraftStatus extends Entity {}
-
-const schema = new Schema(AircraftStatus, {
-  hex_ident: { type: 'string' },
-  generated_date: { type: 'date' },
-  logged_date: { type: 'date' },
-  callsign: { type: 'string' },
-  altitude: { type: 'number' },
-  ground_speed: { type: 'number' },
-  track: { type: 'number' },
-  latlon: { type: 'point' },
-  vertical_rate: { type: 'number' }
-})
-
-const repository = omClient.fetchRepository(schema)
-await repository.createIndex()
-
-let currentId = '$'
+// check forever
 while (true) {
 
-  const result = await redisClient.xRead(
-    { key: streamKey, id: currentId }, { BLOCK: 1000, COUNT: 1 })
+  // wait at most a second for a result
+  const result = await redisClient.xRead({ key: aggregateStreamKey, id: currentId }, { BLOCK: 1000, COUNT: 1 })
 
-  if (!result) continue
+  // loop if we have no results
+  if (result === null) continue
 
-  const messageAndId = result[0].messages[0]
-  const message = messageAndId.message
-  currentId = messageAndId.id
+  // pull the values for the event out of the result
+  const [ { name: streamKey, messages } ] = result
+  const [ { id, message } ] = messages
+  const event = { ...message }
 
-  let aircraft = await repository.search()
-    .where('hex_ident').equals(message.hex_ident)
+  // update the current id so we get the next event next time
+  currentId = id
+
+  // fetch the aircraft
+  let aircraft = await aircraftRepository.search()
+    .where('icacoId').equals(event.icacoId)
       .return.first()
 
-  aircraft = aircraft ?? repository.createEntity()
+  // if we get nothing, we need to create it
+  aircraft = aircraft ?? aircraftRepository.createEntity()
 
-  const generated_date = `${message.generated_date.replace(/\/+/g, '-')}T${message.generated_time}`
-  const logged_date = `${message.logged_date.replace(/\/+/g, '-')}T${message.logged_time}`
+  // if the event has new data, update it
+  if (eventIsNewerThanAircraftStatus(event, aircraft)) {
 
-  aircraft.hex_ident = message.hex_ident
-  aircraft.generated_date = generated_date
-  aircraft.logged_date = logged_date
-  if (message.callsign) aircraft.callsign = message.callsign.trim()
-  if (message.altitude) aircraft.altitude = Number(message.altitude)
-  if (message.ground_speed) aircraft.ground_speed = Number(message.ground_speed)
-  if (message.track) aircraft.track = Number(message.track)
-  if (message.lat && message.lon) {
-    aircraft.latlon = { latitude: Number(message.lat), longitude: Number(message.lon) }
+    // set the easy stuff
+    aircraft.icacoId = event.icacoId
+    aircraft.type = event.type
+    aircraft.generatedDateTime = Number(event.generatedDateTime)
+    aircraft.loggedDateTime = Number(event.loggedDateTime)
+    aircraft.radio = event.radio
+
+    // set the optional stuff
+    if (event.callsign !== undefined) aircraft.callsign = event.callsign
+    if (event.altitude !== undefined) aircraft.altitude = Number(event.altitude)
+    if (event.latitude !== undefined) aircraft.latitude = Number(event.latitude)
+    if (event.longitude !== undefined) aircraft.longitude = Number(event.longitude)
+    if (event.velocity !== undefined) aircraft.velocity = Number(event.velocity)
+    if (event.heading !== undefined) aircraft.heading = Number(event.heading)
+    if (event.climb !== undefined) aircraft.climb = Number(event.climb)
+    if (event.onGround !== undefined) aircraft.onGround = event.onGround === 'true'
+
+    // set the location for geo searches
+    if (aircraft.latitude !== null && aircraft.longitude !== null) {
+      aircraft.location = { latitude: aircraft.latitude, longitude: aircraft.longitude }
+    }
+
+    // log so it looks like stuff is happening
+    console.log(aircraft.entityId)
+
+    // and save
+    await aircraftRepository.save(aircraft)
   }
-  if (message.vertical_rate) aircraft.vertical_rate = Number(message.vertical_rate)
-  await repository.save(aircraft)
+
+}
+
+function eventIsNewerThanAircraftStatus(event, aircraft) {
+  if (aircraft.loggedDateTime === null) return true
+  return Number(event.loggedDateTime) > aircraft.loggedDateTime.getTime()
 }
