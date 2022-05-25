@@ -6,8 +6,8 @@ import { redisClient } from './om/client.js'
 // get the key with all the flight data in it
 const aggregateStreamKey = process.env['AGGREGATE_STREAM_KEY'] ?? 'radio:all'
 
-// start from the begining, we'll filter out old events
-let currentId = '0-0'
+// just start with recent events
+let currentId = '$'
 
 // check forever
 while (true) {
@@ -19,7 +19,7 @@ while (true) {
   if (result === null) continue
 
   // pull the values for the event out of the result
-  const [ { name: streamKey, messages } ] = result
+  const [ { messages } ] = result
   const [ { id, message } ] = messages
   const event = { ...message }
 
