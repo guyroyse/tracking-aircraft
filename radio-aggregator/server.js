@@ -27,8 +27,8 @@ const currentKeysAndIds = streamKeys.map(key => ({ key, id: '$' }))
 // read streams forever
 while (true) {
 
-  // read streams at least once a second
-  const results = await redisClient.xRead(currentKeysAndIds, { BLOCK: 1000, COUNT: 1 })
+  // wait at most a second for results
+  const results = await redisClient.xRead(currentKeysAndIds, { BLOCK: 1000, COUNT: 1 }) ?? []
 
   // we can get a result for each ingestor stream (or none at all if now new events arrived)
   results.forEach(result => {
