@@ -39,7 +39,7 @@ app.get('/events/aircraft/all', async (req, res) => {
     currentId = id
 
     res.write(`id: ${id}\n`)
-    res.write(`data: ${JSON.stringify(message)}\n`)
+    res.write(`data: ${JSON.stringify({ ...message })}\n`)
     res.write(`\n`)
   }
 })
