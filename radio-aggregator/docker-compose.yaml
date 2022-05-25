@@ -5,5 +5,6 @@ services:
       - REDIS_HOST
       - REDIS_PORT
       - REDIS_PASSWORD
-      - INGESTOR_STREAM_KEYS=radio:cmh,radio:ema
-      - AGGREGATOR_STREAM_KEY=radio:all
+      - AGGREGATE_STREAM_KEY
+      - AGGREGATE_STREAM_LIFETIME
+      - INGESTOR_STREAM_KEYS_KEY
