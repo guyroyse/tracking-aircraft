@@ -3,8 +3,8 @@ import 'dotenv/config'
 import { aircraftRepository } from './om/aircraft-status.js'
 import { redisClient } from './om/client.js'
 
-// get the key with all the flight data in it
 const aggregateStreamKey = process.env['AGGREGATE_STREAM_KEY'] ?? 'radio:all'
+const aircraftStatusLifetime = Number(process.env['AIRCRAFT_STATUS_LIFETIME'] ?? 3600)
 
 // just start with recent events
 let currentId = '$'
@@ -60,10 +60,11 @@ while (true) {
     }
 
     // log so it looks like stuff is happening
-    console.log(aircraft.entityId)
+    console.log(aircraft.toJSON())
 
-    // and save
+    // and save and set an expiration
     await aircraftRepository.save(aircraft)
+    await aircraftRepository.expire(aircraft.entityId, aircraftStatusLifetime)
   }
 
 }
