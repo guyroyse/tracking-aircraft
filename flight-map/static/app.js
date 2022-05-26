@@ -6,6 +6,7 @@ const planeIcons = [...Array(24).keys()]
 
 // all the marks for aircraft we've spotted so far
 const aircraftMarkers = {}
+const aircraftData = {}
 
 // add maps to the map
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -30,34 +31,60 @@ const eventSource = new EventSource('http://localhost:8080/events/aircraft/all')
 eventSource.onmessage = event => {
 
   // parse data out of the event
-  const { icacoId, latitude, longitude, heading } = JSON.parse(event.data)
+  const {
+    icacoId, callsign, radio,
+    latitude, longitude, altitude,
+    heading, velocity, climb } = JSON.parse(event.data)
 
-  // find our marker
+  // find our marker and it's popup
   let marker = aircraftMarkers[icacoId]
+  let data = aircraftData[icacoId]
 
   // create it if it's not found and it has data worthy of creation
   if (!marker && latitude !== undefined && longitude !== undefined) {
     marker = L.marker([ latitude, longitude ], { icon: planeIcons[0] }).addTo(map)
+    marker.bindPopup()
     aircraftMarkers[icacoId] = marker
+
+    data = { icacoId, radio }
+    aircraftData[icacoId] = data
   }
 
-  // move the marker (if we have one)
+  // move the marker (if we have one) and update the data
   if (marker) {
-    setMarkerLocation(marker, latitude, longitude)
-    setMarkerHeading(marker, heading)
+
+    if (callsign !== undefined) data.callsign = callsign
+    if (latitude !== undefined) data.latitude = latitude
+    if (longitude !== undefined) data.longitude = longitude
+    if (altitude !== undefined) data.altitude = altitude
+    if (heading !== undefined) data.heading = heading
+    if (velocity !== undefined) data.velocity = velocity
+    if (climb !== undefined) data.climb = climb
+
+    setMarkerLocation(marker, data)
+    setMarkerContent(marker, data)
   }
 }
 
-function setMarkerLocation(marker, latitude, longitude) {
+function setMarkerLocation(marker, { latitude, longitude, heading }) {
+
   if (latitude !== undefined && longitude !== undefined) {
-    marker.setLatLng([latitude, longitude])
+    marker.setLatLng([ latitude, longitude ])
   }
-}
 
-function setMarkerHeading(marker, heading) {
-  if (heading) {
+  if (heading !== undefined) {
     let index = Math.round(heading / 15)
     index = index === 24 ? 0 : index
     marker.setIcon(planeIcons[index])
   }
+}
+
+function setMarkerContent(marker, data) {
+  marker.setPopupContent(
+    `Flight: ${data.callsign ?? '<unknow>'} (${data.icacoId})<br>` +
+    `Location: ${data.latitude},${data.longitude}<br>` +
+    `Altitude: ${data.altitude ?? '<unknown>'}ft<br>` +
+    `Heading: ${data.heading ?? '<unknown>'}deg<br>` +
+    `Velocity: ${data.velocity ?? '<unknown>'}kn<br>` +
+    `Climb: ${data.climb ?? '<unknown>'}ft<br>`)
 }
