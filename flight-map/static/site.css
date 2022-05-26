@@ -7,9 +7,5 @@
   height: 16px;
   width: 16px;
   background-size: 16px 16px;
-  background-image: url('aeroplane.png');
-}
-
-.effort {
-  display: none
+  background-image: url('plane.png');
 }
