@@ -5,9 +5,7 @@ class AircraftStatus extends Entity {}
 
 const aircraftSchema = new Schema(AircraftStatus, {
   icacoId: { type: 'string' },
-  type: { type: 'string' },
-  generatedDateTime: { type: 'date' },
-  loggedDateTime: { type: 'date' },
+  dateTime: { type: 'date' },
   radio: { type: 'string' },
   callsign: { type: 'string' },
   altitude: { type: 'number' },

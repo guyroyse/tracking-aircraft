@@ -39,9 +39,7 @@ while (true) {
 
     // set the easy stuff
     aircraft.icacoId = event.icacoId
-    aircraft.type = event.type
-    aircraft.generatedDateTime = Number(event.generatedDateTime)
-    aircraft.loggedDateTime = Number(event.loggedDateTime)
+    aircraft.dateTime = Number(event.loggedDateTime)
     aircraft.radio = event.radio
 
     // set the optional stuff
