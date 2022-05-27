@@ -45,6 +45,7 @@ while (true) {
     currentKeysAndIds[index].id = id
 
     // log the event so it looks like the service does something
+    console.log(event)
 
     // find oldest event id to keep
     const oldestEventId = new Date().getTime() - aggregateStreamLifetime * 1000
