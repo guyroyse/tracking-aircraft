@@ -68,6 +68,6 @@ while (true) {
 }
 
 function eventIsNewerThanAircraftStatus(event, aircraft) {
-  if (aircraft.loggedDateTime === null) return true
+  if (aircraft.dateTime === null) return true
   return Number(event.loggedDateTime) > aircraft.dateTime.getTime()
 }
