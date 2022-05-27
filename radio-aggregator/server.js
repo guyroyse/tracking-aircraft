@@ -20,15 +20,17 @@ await redisClient.connect()
 
 // get the keys for all the ingestor streams from Redis
 const streamKeys = await redisClient.sMembers(ingestorStreamKeysKey)
+console.log("Monitoring radios:", ...streamKeys)
 
 // this gets passed into .xRead to read all the streams
-const currentKeysAndIds = streamKeys.map(key => ({ key, id: '$' }))
+const startId = `${new Date().getTime()}-0`
+const currentKeysAndIds = streamKeys.map(key => ({ key, id: startId }))
 
 // read streams forever
 while (true) {
 
   // wait at most a second for results
-  const results = await redisClient.xRead(currentKeysAndIds, { BLOCK: 1000, COUNT: 1 }) ?? []
+  const results = await redisClient.xRead(currentKeysAndIds, { BLOCK: 1000, COUNT: 10 }) ?? []
 
   // we can get a result for each ingestor stream (or none at all if now new events arrived)
   results.forEach(result => {
@@ -43,7 +45,6 @@ while (true) {
     currentKeysAndIds[index].id = id
 
     // log the event so it looks like the service does something
-    console.log(event)
 
     // find oldest event id to keep
     const oldestEventId = new Date().getTime() - aggregateStreamLifetime * 1000
