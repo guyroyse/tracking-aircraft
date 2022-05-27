@@ -80,11 +80,26 @@ function setMarkerLocation(marker, { latitude, longitude, heading }) {
 }
 
 function setMarkerContent(marker, data) {
-  marker.setPopupContent(
-    `Flight: ${data.callsign ?? '<unknow>'} (${data.icacoId})<br>` +
-    `Location: ${data.latitude},${data.longitude}<br>` +
-    `Altitude: ${data.altitude ?? '<unknown>'}ft<br>` +
-    `Heading: ${data.heading ?? '<unknown>'}deg<br>` +
-    `Velocity: ${data.velocity ?? '<unknown>'}kn<br>` +
-    `Climb: ${data.climb ?? '<unknown>'}ft<br>`)
+  let content
+
+  if (data.callsign) {
+    content = `Flight: <a href="https://flightaware.com/live/flight/${data.callsign}"
+      target="_new">${data.callsign}</a> (${data.icacoId})<br>`
+  } else {
+    content = `Flight: ${data.icacoId}<br>`
+  }
+
+  content += `
+    Location:
+      ${data.latitude},${data.longitude}<br>
+    Altitude:
+      ${data.altitude ?? 'unknown'} ft<br>
+    Heading:
+      ${data.heading ?? 'unknown'} deg<br>
+    Velocity:
+      ${data.velocity ?? 'unknown'} kn<br>
+    Climb:
+      ${data.climb ?? 'unknown'} ft<br>`
+
+  marker.setPopupContent(content)
 }
