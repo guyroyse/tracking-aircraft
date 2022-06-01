@@ -32,22 +32,22 @@ eventSource.onmessage = event => {
 
   // parse data out of the event
   const {
-    icacoId, callsign, radio,
+    icaoId, callsign, radio,
     latitude, longitude, altitude,
     heading, velocity, climb } = JSON.parse(event.data)
 
   // find our marker and it's popup
-  let marker = aircraftMarkers[icacoId]
-  let data = aircraftData[icacoId]
+  let marker = aircraftMarkers[icaoId]
+  let data = aircraftData[icaoId]
 
   // create it if it's not found and it has data worthy of creation
   if (!marker && latitude !== undefined && longitude !== undefined) {
     marker = L.marker([ latitude, longitude ], { icon: planeIcons[0] }).addTo(map)
     marker.bindPopup()
-    aircraftMarkers[icacoId] = marker
+    aircraftMarkers[icaoId] = marker
 
-    data = { icacoId, radio }
-    aircraftData[icacoId] = data
+    data = { icaoId, radio }
+    aircraftData[icaoId] = data
   }
 
   // move the marker (if we have one) and update the data
@@ -84,9 +84,9 @@ function setMarkerContent(marker, data) {
 
   if (data.callsign) {
     content = `Flight: <a href="https://flightaware.com/live/flight/${data.callsign}"
-      target="_new">${data.callsign}</a> (${data.icacoId})<br>`
+      target="_new">${data.callsign}</a> (${data.icaoId})<br>`
   } else {
-    content = `Flight: ${data.icacoId}<br>`
+    content = `Flight: ${data.icaoId}<br>`
   }
 
   content += `

@@ -31,7 +31,7 @@ sbs1Client.on('message', msg => {
 
   // create the event
   const event = {
-    icacoId: msg.hex_ident,
+    icaoId: msg.hex_ident,
     type: toTransmissionType(msg.transmission_type),
     generatedDateTime: toEpochMilliseconds(msg.generated_date, msg.generated_time).toString(),
     loggedDateTime: toEpochMilliseconds(msg.logged_date, msg.logged_time).toString()

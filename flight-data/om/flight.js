@@ -1,10 +1,10 @@
 import { Entity, Schema } from 'redis-om'
 import { omClient } from './client.js'
 
-class AircraftStatus extends Entity {}
+class Flight extends Entity {}
 
-const aircraftSchema = new Schema(AircraftStatus, {
-  icacoId: { type: 'string' },
+const flightSchema = new Schema(Flight, {
+  icaoId: { type: 'string' },
   dateTime: { type: 'date' },
   radio: { type: 'string' },
   callsign: { type: 'string' },
@@ -18,5 +18,5 @@ const aircraftSchema = new Schema(AircraftStatus, {
   onGround: { type: 'boolean' }
 })
 
-export const aircraftRepository = omClient.fetchRepository(aircraftSchema)
-await aircraftRepository.createIndex()
+export const flightRepository = omClient.fetchRepository(flightSchema)
+await flightRepository.createIndex()
