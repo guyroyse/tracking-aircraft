@@ -1,0 +1,36 @@
+services:
+  api-gateway:
+    build: api-gateway
+    ports:
+      - "8080:80"
+    depends_on:
+      - flight-ui
+  flight-ui:
+    build: flight-ui
+    depends_on:
+      - flight-data
+      - flight-events
+  flight-data:
+    build: flight-data
+    environment:
+      - REDIS_HOST
+      - REDIS_PORT
+      - REDIS_PASSWORD
+      - AGGREGATE_STREAM_KEY
+      - FLIGHT_DATA_LIFETIME
+  flight-events:
+    build: flight-events
+    environment:
+      - REDIS_HOST
+      - REDIS_PORT
+      - REDIS_PASSWORD
+      - AGGREGATE_STREAM_KEY
+  radio-aggregator:
+    build: radio-aggregator
+    environment:
+      - REDIS_HOST
+      - REDIS_PORT
+      - REDIS_PASSWORD
+      - AGGREGATE_STREAM_KEY
+      - AGGREGATE_STREAM_LIFETIME
+      - INGESTOR_STREAM_KEYS_KEY

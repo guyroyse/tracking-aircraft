@@ -1,9 +1,0 @@
-services:
-  aircraft-capture:
-    build: .
-    environment:
-      - REDIS_HOST
-      - REDIS_PORT
-      - REDIS_PASSWORD
-      - AGGREGATE_STREAM_KEY
-      - AIRCRAFT_STATUS_LIFETIME

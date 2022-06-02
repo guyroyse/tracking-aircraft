@@ -22,7 +22,7 @@ export function startServer() {
   app.use('/flights', searchRouter)
 
   /* start the server */
-  app.listen(8888)
+  app.listen(80)
 
 }
 

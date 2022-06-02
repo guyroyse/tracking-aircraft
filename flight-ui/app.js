@@ -26,7 +26,7 @@ navigator.geolocation.getCurrentPosition(position => {
 })
 
 // set up our event source and handle the events
-const eventSource = new EventSource('http://localhost:8080/events/aircraft/all')
+const eventSource = new EventSource('/events/flights/all')
 
 eventSource.onmessage = event => {
 

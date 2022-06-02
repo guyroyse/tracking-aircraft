@@ -2,13 +2,15 @@ import 'dotenv/config'
 
 import * as redis from 'redis'
 import express from 'express'
+import cors from 'cors'
 
 const redisHost = process.env['REDIS_HOST'] ?? 'localhost'
 const redisPort = Number(process.env['REDIS_PORT'] ?? 6379)
 const redisPassword = process.env['REDIS_PASSWORD']
 
-const streamKey = process.env['STREAM_KEY']
+const streamKey = process.env['AGGREGATE_STREAM_KEY']
 
+/* Connect to Redis */
 const redisClient = redis.createClient({
   socket: { host: redisHost, port: redisPort },
   password: redisPassword })
@@ -16,12 +18,18 @@ const redisClient = redis.createClient({
 redisClient.on('error', (err) => console.log('Redis Client Error', err))
 await redisClient.connect()
 
-
+/* create an express app and set it up to be excessively permissive */
 const app = new express()
 app.use(express.json())
-app.use(express.static('static'))
+app.use(cors())
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+})
 
-app.get('/events/aircraft/all', async (req, res) => {
+/* Set up server sent events for all aircraft */
+app.get('/events/flights/all', async (req, res) => {
   res.writeHead(200, {
     'Connection': 'keep-alive',
     'Content-Type': 'text/event-stream',
@@ -43,4 +51,4 @@ app.get('/events/aircraft/all', async (req, res) => {
   }
 })
 
-app.listen(8080)
+app.listen(80)
