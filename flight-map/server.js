@@ -7,7 +7,6 @@ const redisHost = process.env['REDIS_HOST'] ?? 'localhost'
 const redisPort = Number(process.env['REDIS_PORT'] ?? 6379)
 const redisPassword = process.env['REDIS_PASSWORD']
 
-
 const streamKey = process.env['STREAM_KEY']
 
 const redisClient = redis.createClient({
