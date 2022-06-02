@@ -58,7 +58,7 @@ export async function startConsumer() {
       }
 
       // log so it looks like stuff is happening
-      console.log(flight.toJSON())
+      // console.log(flight.toJSON())
 
       // and save and set an expiration
       await flightRepository.save(flight)

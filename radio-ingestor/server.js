@@ -48,7 +48,7 @@ sbs1Client.on('message', msg => {
   if (msg.is_on_ground !== null) event.onGround = msg.is_on_ground.toString()
 
   // log the event so it looks like the service does something
-  console.log(event)
+  // console.log(event)
 
   // find oldest event id to keep
   const oldestEventId = new Date().getTime() - ingestorStreamLifetime * 1000
