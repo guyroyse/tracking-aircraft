@@ -1,3 +1,5 @@
+const AIRCRAFT_EXPIRATION_TIME = 60 * 1000
+
 // map and icons
 const map = L.map('map')
 const homeIcon = L.icon({ iconUrl: 'icons/home.png', iconSize: [16, 16] })
@@ -24,6 +26,9 @@ navigator.geolocation.getCurrentPosition(position => {
   map.setView([ latitude, longitude ], 8)
   L.marker([ latitude, longitude ], { icon: homeIcon }).addTo(map)
 })
+
+// set up aircraft garbage collection
+setInterval(removeStaleMarkers, 5000)
 
 // set up our event source and handle the events
 const eventSource = new EventSource('/events/flights/all')
@@ -60,6 +65,8 @@ eventSource.onmessage = event => {
     if (heading !== undefined) data.heading = heading
     if (velocity !== undefined) data.velocity = velocity
     if (climb !== undefined) data.climb = climb
+
+    data.lastUpdated = new Date().getTime()
 
     setMarkerLocation(marker, data)
     setMarkerContent(marker, data)
@@ -102,4 +109,19 @@ function setMarkerContent(marker, data) {
       ${data.climb ?? 'unknown'} ft<br>`
 
   marker.setPopupContent(content)
+}
+
+function removeStaleMarkers() {
+  const now = new Date().getTime()
+  for (const icaoId in aircraftData){
+    if ((now - aircraftData[icaoId].lastUpdated) > AIRCRAFT_EXPIRATION_TIME) {
+      const marker = aircraftMarkers[icaoId]
+
+      marker.remove()
+      delete aircraftData[icaoId]
+      delete aircraftMarkers[icaoId]
+
+      console.log("Removed aircraft:", icaoId )
+    }
+  }
 }
