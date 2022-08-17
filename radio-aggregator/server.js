@@ -30,9 +30,9 @@ const currentKeysAndIds = streamKeys.map(key => ({ key, id: startId }))
 while (true) {
 
   // wait at most a second for results
-  const results = await redisClient.xRead(currentKeysAndIds, { BLOCK: 1000, COUNT: 10 }) ?? []
+  const results = await redisClient.xRead(currentKeysAndIds, { BLOCK: 1000, COUNT: 1 }) ?? []
 
-  // we can get a result for each ingestor stream (or none at all if now new events arrived)
+  // we can get a result for each ingestor stream (or none at all if no new events arrived)
   results.forEach(result => {
 
     // pull the values for the event out of the result
