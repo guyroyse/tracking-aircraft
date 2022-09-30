@@ -12,7 +12,6 @@ const redisPassword = process.env['REDIS_PASSWORD']
 
 const ingestorStreamLifetime = Number(process.env['INGESTOR_STREAM_LIFETIME'] ?? 3600)
 const ingestorStreamKey = process.env['INGESTOR_STREAM_KEY']
-const ingestorStreamKeysKey = process.env['INGESTOR_STREAM_KEYS_KEY'] ?? 'radios'
 
 // connect to Redis
 const redisClient = redis.createClient({
@@ -21,9 +20,6 @@ const redisClient = redis.createClient({
 
 redisClient.on('error', (err) => console.log('Redis Client Error', err))
 await redisClient.connect()
-
-// add the stream key to a set for later aggregation
-redisClient.sAdd(ingestorStreamKeysKey, ingestorStreamKey)
 
 // connect to SBS1 source and await messages
 const sbs1Client = sbs1.createClient({ host: sbs1Host, port: sbs1Port })
@@ -46,9 +42,6 @@ sbs1Client.on('message', msg => {
   if (msg.track !== null) event.heading = msg.track.toString()
   if (msg.vertical_rate !== null) event.climb = msg.vertical_rate.toString()
   if (msg.is_on_ground !== null) event.onGround = msg.is_on_ground.toString()
-
-  // log the event so it looks like the service does something
-  // console.log(event)
 
   // find oldest event id to keep
   const oldestEventId = new Date().getTime() - ingestorStreamLifetime * 1000
