@@ -13,6 +13,9 @@ const redisPassword = process.env['REDIS_PASSWORD']
 const ingestorStreamLifetime = Number(process.env['INGESTOR_STREAM_LIFETIME'] ?? 3600)
 const ingestorStreamKey = process.env['INGESTOR_STREAM_KEY']
 
+const radioId = process.env['RADIO_ID']
+
+
 // connect to Redis
 const redisClient = redis.createClient({
   socket: { host: redisHost, port: redisPort },
@@ -27,6 +30,7 @@ sbs1Client.on('message', msg => {
 
   // create the event
   const event = {
+    radioId: radioId,
     icaoId: msg.hex_ident,
     type: toTransmissionType(msg.transmission_type),
     generatedDateTime: toEpochMilliseconds(msg.generated_date, msg.generated_time).toString(),
