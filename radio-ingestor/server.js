@@ -30,7 +30,7 @@ sbs1Client.on('message', msg => {
 
   // create the event
   const event = {
-    radioId,
+    radio: radioId,
     icaoId: msg.hex_ident,
     type: toTransmissionType(msg.transmission_type),
     generatedDateTime: toEpochMilliseconds(msg.generated_date, msg.generated_time).toString(),
