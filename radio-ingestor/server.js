@@ -10,8 +10,8 @@ const redisHost = process.env['REDIS_HOST'] ?? 'localhost'
 const redisPort = Number(process.env['REDIS_PORT'] ?? 6379)
 const redisPassword = process.env['REDIS_PASSWORD']
 
-const ingestorStreamLifetime = Number(process.env['INGESTOR_STREAM_LIFETIME'] ?? 3600)
-const ingestorStreamKey = process.env['INGESTOR_STREAM_KEY']
+const streamKey = process.env['STREAM_KEY']
+const streamLifetime = Number(process.env['STREAM_LIFETIME'] ?? 3600)
 
 const radioId = process.env['RADIO_ID']
 
@@ -48,11 +48,11 @@ sbs1Client.on('message', msg => {
   if (msg.is_on_ground !== null) event.onGround = msg.is_on_ground.toString()
 
   // find oldest event id to keep
-  const oldestEventId = new Date().getTime() - ingestorStreamLifetime * 1000
+  const oldestEventId = new Date().getTime() - streamLifetime * 1000
 
   // add the event to the stream, expiring old events
   redisClient.xAdd(
-    ingestorStreamKey, '*', event, {
+    streamKey, '*', event, {
       TRIM: {
         strategy: 'MINID',
         strategyModifier: '~',

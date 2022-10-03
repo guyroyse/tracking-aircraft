@@ -7,7 +7,6 @@ services:
       - REDIS_HOST
       - REDIS_PORT
       - REDIS_PASSWORD
-      - INGESTOR_STREAM_KEY
-      - INGESTOR_STREAM_KEYS_KEY
-      - INGESTOR_STREAM_LIFETIME
+      - STREAM_KEY
+      - STREAM_LIFETIME
       - RADIO_ID
