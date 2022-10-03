@@ -19,7 +19,8 @@ const radioId = process.env['RADIO_ID']
 // connect to Redis
 const redisClient = redis.createClient({
   socket: { host: redisHost, port: redisPort },
-  password: redisPassword })
+  password: redisPassword
+})
 
 redisClient.on('error', (err) => console.log('Redis Client Error', err))
 await redisClient.connect()

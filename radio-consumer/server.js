@@ -14,7 +14,8 @@ const flightDataLifetime = Number(process.env['FLIGHT_DATA_LIFETIME'] ?? 3600)
 // connect to Redis
 const redisClient = redis.createClient({
   socket: { host: redisHost, port: redisPort },
-  password: redisPassword })
+  password: redisPassword
+})
 
 redisClient.on('error', (err) => console.log('Redis Client Error', err))
 await redisClient.connect()
