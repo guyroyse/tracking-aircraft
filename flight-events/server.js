@@ -1,54 +1,77 @@
 import 'dotenv/config'
 
 import * as redis from 'redis'
-import express from 'express'
-import cors from 'cors'
+import { WebSocketServer } from 'ws'
+
 
 const redisHost = process.env['REDIS_HOST'] ?? 'localhost'
 const redisPort = Number(process.env['REDIS_PORT'] ?? 6379)
 const redisPassword = process.env['REDIS_PASSWORD']
 
-const streamKey = process.env['AGGREGATE_STREAM_KEY']
+const streamKey = process.env['STREAM_KEY']
 
-/* Connect to Redis */
+const webSocketPort = Number(process.env['WEBSOCKET_PORT'] ?? 80)
+
+
+// connect to Redis
 const redisClient = redis.createClient({
   socket: { host: redisHost, port: redisPort },
-  password: redisPassword })
+  password: redisPassword
+})
 
 redisClient.on('error', (err) => console.log('Redis Client Error', err))
 await redisClient.connect()
 
-/* create an express app and set it up to be excessively permissive */
-const app = new express()
-app.use(express.json())
-app.use(cors())
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+// set up a basic web sockect server and a set to hold all the sockets
+const wss = new WebSocketServer({ port: webSocketPort })
+const sockets = new Set()
+
+// when someone connects, add their socket to the set of all sockets
+// and remove them if they disconnect
+wss.on('connection', socket => {
+  sockets.add(socket)
+  socket.on('close', () => sockets.delete(socket))
 })
 
-/* Set up server sent events for all aircraft */
-app.get('/events/flights/all', async (req, res) => {
-  res.writeHead(200, {
-    'Connection': 'keep-alive',
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache'
-  })
+// just start with recent events
+let currentId = '$'
 
-  let currentId = '$'
-  while (true) {
-    const result = await redisClient.xRead({ key: streamKey, id: currentId }, { BLOCK: 5000, COUNT: 1 })
+// check forever
+while (true) {
 
-    if (!result) continue
+  // wait at most a second for a result
+  const result = await redisClient.xRead({ key: streamKey, id: currentId }, { BLOCK: 1000, COUNT: 1 })
 
-    const { id, message } = result[0].messages[0]
-    currentId = id
+  // loop if we have no results
+  if (result === null) continue
 
-    res.write(`id: ${id}\n`)
-    res.write(`data: ${JSON.stringify({ ...message })}\n`)
-    res.write(`\n`)
-  }
-})
+  // pull the values for the event out of the result
+  const [ { messages } ] = result
+  const [ { id, message } ] = messages
+  const event = { ...message }
 
-app.listen(80)
+  // update the current id so we get the next event next time
+  currentId = id
+
+  // create the event to publish
+  const eventToPublish = {}
+
+  // set the always stuff
+  eventToPublish.icaoId = event.icaoId,
+  eventToPublish.dateTime = Number(event.loggedDateTime),
+  eventToPublish.radio = event.radio
+
+  // set the sometimes stuff
+  if (event.callsign !== undefined) eventToPublish.callsign = event.callsign
+  if (event.altitude !== undefined) eventToPublish.altitude = Number(event.altitude)
+  if (event.latitude !== undefined) eventToPublish.latitude = Number(event.latitude)
+  if (event.longitude !== undefined) eventToPublish.longitude = Number(event.longitude)
+  if (event.velocity !== undefined) eventToPublish.velocity = Number(event.velocity)
+  if (event.heading !== undefined) eventToPublish.heading = Number(event.heading)
+  if (event.climb !== undefined) eventToPublish.climb = Number(event.climb)
+  if (event.onGround !== undefined) eventToPublish.onGround = event.onGround === 'true'
+
+  // stringify and send to the all the listeners
+  const json = JSON.stringify(eventToPublish)
+  sockets.forEach(s => s.send(json))
+}
