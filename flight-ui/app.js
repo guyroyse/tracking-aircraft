@@ -18,7 +18,7 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
   tileSize: 512,
   zoomOffset: -1,
   accessToken: 'pk.eyJ1IjoiZ3V5cm95c2UiLCJhIjoiY2wyZXhjdXNkMDQ3NjNra2ptajhlN3J3OSJ9.y3JcnAPeRMLCLifILS8t0Q'
-}).addTo(map);
+}).addTo(map)
 
 // add our current location and center the view there
 navigator.geolocation.getCurrentPosition(position => {
@@ -31,45 +31,47 @@ navigator.geolocation.getCurrentPosition(position => {
 setInterval(removeStaleMarkers, 5000)
 
 // set up our event source and handle the events
-const eventSource = new EventSource('/events/flights/all')
+let ws = new WebSocket('ws://localhost:8081/')
 
-eventSource.onmessage = event => {
+ws.onopen = event => {
+  ws.onmessage = event => {
 
-  // parse data out of the event
-  const {
-    icaoId, callsign, radio,
-    latitude, longitude, altitude,
-    heading, velocity, climb } = JSON.parse(event.data)
+    // parse data out of the event
+    const {
+      icaoId, callsign, radio,
+      latitude, longitude, altitude,
+      heading, velocity, climb } = JSON.parse(event.data)
 
-  // find our marker and it's popup
-  let marker = aircraftMarkers[icaoId]
-  let data = aircraftData[icaoId]
+    // find our marker and it's popup
+    let marker = aircraftMarkers[icaoId]
+    let data = aircraftData[icaoId]
 
-  // create it if it's not found and it has data worthy of creation
-  if (!marker && latitude !== undefined && longitude !== undefined) {
-    marker = L.marker([ latitude, longitude ], { icon: planeIcons[0] }).addTo(map)
-    marker.bindPopup()
-    aircraftMarkers[icaoId] = marker
+    // create it if it's not found and it has data worthy of creation
+    if (!marker && latitude !== undefined && longitude !== undefined) {
+      marker = L.marker([ latitude, longitude ], { icon: planeIcons[0] }).addTo(map)
+      marker.bindPopup()
+      aircraftMarkers[icaoId] = marker
 
-    data = { icaoId, radio }
-    aircraftData[icaoId] = data
-  }
+      data = { icaoId, radio }
+      aircraftData[icaoId] = data
+    }
 
-  // move the marker (if we have one) and update the data
-  if (marker) {
+    // move the marker (if we have one) and update the data
+    if (marker) {
 
-    if (callsign !== undefined) data.callsign = callsign
-    if (latitude !== undefined) data.latitude = latitude
-    if (longitude !== undefined) data.longitude = longitude
-    if (altitude !== undefined) data.altitude = altitude
-    if (heading !== undefined) data.heading = heading
-    if (velocity !== undefined) data.velocity = velocity
-    if (climb !== undefined) data.climb = climb
+      if (callsign !== undefined) data.callsign = callsign
+      if (latitude !== undefined) data.latitude = latitude
+      if (longitude !== undefined) data.longitude = longitude
+      if (altitude !== undefined) data.altitude = altitude
+      if (heading !== undefined) data.heading = heading
+      if (velocity !== undefined) data.velocity = velocity
+      if (climb !== undefined) data.climb = climb
 
-    data.lastUpdated = new Date().getTime()
+      data.lastUpdated = new Date().getTime()
 
-    setMarkerLocation(marker, data)
-    setMarkerContent(marker, data)
+      setMarkerLocation(marker, data)
+      setMarkerContent(marker, data)
+    }
   }
 }
 
@@ -90,10 +92,12 @@ function setMarkerContent(marker, data) {
   let content
 
   if (data.callsign) {
-    content = `Flight: <a href="https://flightaware.com/live/flight/${data.callsign}"
-      target="_new">${data.callsign}</a> (${data.icaoId})<br>`
+    content = `Flight:
+      <a href="https://flightaware.com/live/flight/${data.callsign}" target="_new">${data.callsign}</a>
+      (<a href="http://localhost:8080/aircraft/icao/${data.icaoId}" target="_new">${data.icaoId}</a>)<br>`
   } else {
-    content = `Flight: ${data.icaoId}<br>`
+    content = `Flight:
+      <a href="http://localhost:8080/aircraft/icao/${data.icaoId}" target="_new">${data.icaoId}</a><br>`
   }
 
   content += `
