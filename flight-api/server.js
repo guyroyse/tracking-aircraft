@@ -3,8 +3,8 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 
-/* import routers */
-import { router as aircraftRouter } from './aircraft-router.js'
+/* import the router */
+import { router } from './router.js'
 
 /* create an express app and set it up to be excessively permissive */
 const app = new express()
@@ -16,8 +16,8 @@ app.use(function(req, res, next) {
   next();
 })
 
-/* bring in some routers */
-app.use('/aircraft', aircraftRouter)
+/* bind the router */
+app.use('/aircraft', router)
 
 /* start the server */
 app.listen(80)
