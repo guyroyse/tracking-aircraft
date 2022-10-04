@@ -48,7 +48,7 @@ while (true) {
   aircraft.dateTime = event.loggedDateTime,
   aircraft.radio = event.radio
 
-  // set the optional stuff
+  // set the sometimes stuff
   if (event.callsign !== undefined) aircraft.callsign = event.callsign
   if (event.altitude !== undefined) aircraft.altitude = event.altitude
   if (event.latitude !== undefined) aircraft.latitude = event.latitude
