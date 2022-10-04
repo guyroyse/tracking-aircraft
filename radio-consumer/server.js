@@ -8,7 +8,7 @@ const redisPassword = process.env['REDIS_PASSWORD']
 
 const streamKey = process.env['STREAM_KEY']
 
-const flightDataLifetime = Number(process.env['FLIGHT_DATA_LIFETIME'] ?? 3600)
+const aircraftDataLifetime = Number(process.env['AIRCRAFT_DATA_LIFETIME'] ?? 3600)
 
 
 // connect to Redis
@@ -66,5 +66,5 @@ while (true) {
   // set the data in Redis with an expiration
   const key = `aircraft:${event.icaoId}`
   redisClient.hSet(key, aircraft)
-  redisClient.expire(key, flightDataLifetime)
+  redisClient.expire(key, aircraftDataLifetime)
 }

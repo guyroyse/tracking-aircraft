@@ -8,20 +8,26 @@ services:
   flight-ui:
     build: flight-ui
     depends_on:
-      - flight-data
+      - flight-api
       - flight-events
-  flight-data:
-    build: flight-data
+  flight-api:
+    build: flight-api
     environment:
       - REDIS_HOST
       - REDIS_PORT
       - REDIS_PASSWORD
-      - AGGREGATE_STREAM_KEY
-      - FLIGHT_DATA_LIFETIME
   flight-events:
     build: flight-events
     environment:
       - REDIS_HOST
       - REDIS_PORT
       - REDIS_PASSWORD
-      - AGGREGATE_STREAM_KEY
+      - STREAM_KEY
+  radio-consumer:
+    build: radio-consumer
+    environment:
+      - REDIS_HOST
+      - REDIS_PORT
+      - REDIS_PASSWORD
+      - STREAM_KEY
+      - AIRCRAFT_DATA_LIFETIME

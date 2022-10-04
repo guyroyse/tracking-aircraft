@@ -3,10 +3,6 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 
-
-const apiPort = Number(process.env['API_PORT'] ?? 80)
-
-
 /* import routers */
 import { router as aircraftRouter } from './aircraft-router.js'
 
@@ -24,4 +20,4 @@ app.use(function(req, res, next) {
 app.use('/aircraft', aircraftRouter)
 
 /* start the server */
-app.listen(apiPort)
+app.listen(80)

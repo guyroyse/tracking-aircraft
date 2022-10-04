@@ -10,9 +10,6 @@ const redisPassword = process.env['REDIS_PASSWORD']
 
 const streamKey = process.env['STREAM_KEY']
 
-const webSocketPort = Number(process.env['WEBSOCKET_PORT'] ?? 80)
-
-
 // connect to Redis
 const redisClient = redis.createClient({
   socket: { host: redisHost, port: redisPort },
@@ -23,7 +20,7 @@ redisClient.on('error', (err) => console.log('Redis Client Error', err))
 await redisClient.connect()
 
 // set up a basic web sockect server and a set to hold all the sockets
-const wss = new WebSocketServer({ port: webSocketPort })
+const wss = new WebSocketServer({ port: 80 })
 const sockets = new Set()
 
 // when someone connects, add their socket to the set of all sockets

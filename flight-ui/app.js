@@ -31,7 +31,7 @@ navigator.geolocation.getCurrentPosition(position => {
 setInterval(removeStaleMarkers, 5000)
 
 // set up our event source and handle the events
-let ws = new WebSocket('ws://localhost:8081/')
+let ws = new WebSocket(`ws://${location.host}/events`)
 
 ws.onopen = event => {
   ws.onmessage = event => {
