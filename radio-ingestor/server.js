@@ -63,9 +63,12 @@ sbs1Client.on('message', msg => {
 })
 
 function toEpochMilliseconds(dateString, timeString) {
-  const offset = new Date().getTimezoneOffset() * 60 * 1000
-  const date = new Date(`${dateString.replaceAll('/', '-')}T${timeString}`)
-  return date.getTime() - offset
+  if (dateString && timeString) {
+    const offset = new Date().getTimezoneOffset() * 60 * 1000
+    const date = new Date(`${dateString.replaceAll('/', '-')}T${timeString}`)
+    return date.getTime() - offset
+  }
+  return ''
 }
 
 function toTransmissionType(type) {
