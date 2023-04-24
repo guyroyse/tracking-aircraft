@@ -1,0 +1,7 @@
+{
+  "name": "flight-injector",
+  "version": "1.0.0",
+  "type": "module",
+  "author": "Guy Royse <guy@guyroyse.com> (http://guyroyse.com/)",
+  "license": "MIT"
+}
