@@ -11,8 +11,9 @@ const aircraftMarkers = {}
 const aircraftData = {}
 
 // add maps to the map
-L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+const baseLayer = L.tileLayer.offline('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
   attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+  minZoom: 6,
   maxZoom: 18,
   id: 'mapbox/streets-v11',
   tileSize: 512,
@@ -20,12 +21,47 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
   accessToken: 'pk.eyJ1IjoiZ3V5cm95c2UiLCJhIjoiY2wyZXhjdXNkMDQ3NjNra2ptajhlN3J3OSJ9.y3JcnAPeRMLCLifILS8t0Q'
 }).addTo(map)
 
+// add buttons to save tiles in area viewed
+L.control.savetiles(baseLayer, {
+  zoomlevels: [6, 18], // optional zoomlevels to save, default current zoomlevel
+  alwaysDownload: false,
+  confirm(layer, successCallback) {
+    // eslint-disable-next-line no-alert
+    if (window.confirm(`Save ${layer._tilesforSave.length}`)) {
+      successCallback();
+    }
+  },
+  confirmRemoval(layer, successCallback) {
+    // eslint-disable-next-line no-alert
+    if (window.confirm('Remove all the tiles?')) {
+      successCallback();
+    }
+  },
+  saveText: 'D',
+  rmText: 'C',
+}).addTo(map);
+
+// // add maps to the map
+// L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+//   attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+//   maxZoom: 18,
+//   id: 'mapbox/streets-v11',
+//   tileSize: 512,
+//   zoomOffset: -1,
+//   accessToken: 'pk.eyJ1IjoiZ3V5cm95c2UiLCJhIjoiY2wyZXhjdXNkMDQ3NjNra2ptajhlN3J3OSJ9.y3JcnAPeRMLCLifILS8t0Q'
+// }).addTo(map)
+
 // add our current location and center the view there
 navigator.geolocation.getCurrentPosition(position => {
   const { latitude, longitude } = position.coords
   map.setView([ latitude, longitude ], 8)
   L.marker([ latitude, longitude ], { icon: homeIcon }).addTo(map)
-})
+}, error => {
+  const latitude = 40.093565
+  const longitude = -82.919196
+  map.setView([ latitude, longitude ], 8)
+  L.marker([ latitude, longitude ], { icon: homeIcon }).addTo(map)
+}, { timeout : 1000 })
 
 // set up aircraft garbage collection
 setInterval(removeStaleMarkers, 5000)
