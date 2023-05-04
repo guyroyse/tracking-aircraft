@@ -3,7 +3,7 @@ import fs from 'fs'
 import readline from 'readline'
 
 // define the path to the ASD-B file to inject
-const filePath = 'capture.txt'
+const filePath = 'cmh-2023-04-24.dat'
 
 // define the host and port of the dump1090 network socket
 const host = 'localhost'
