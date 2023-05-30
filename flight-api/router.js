@@ -67,27 +67,5 @@ function convertMultipleResult(result) {
 }
 
 function convertDocument(document) {
-  // get the value
-  const data = document.value
-
-  // create the aircraft to return
-  const aircraft = {}
-
-  // set the always stuff
-  aircraft.icaoId = data.icaoId,
-  aircraft.dateTime = Number(data.dateTime),
-  aircraft.radio = data.radio
-
-  // set the sometimes stuff
-  if (data.callsign !== undefined) aircraft.callsign = data.callsign
-  if (data.altitude !== undefined) aircraft.altitude = Number(data.altitude)
-  if (data.latitude !== undefined) aircraft.latitude = Number(data.latitude)
-  if (data.longitude !== undefined) aircraft.longitude = Number(data.longitude)
-  if (data.velocity !== undefined) aircraft.velocity = Number(data.velocity)
-  if (data.heading !== undefined) aircraft.heading = Number(data.heading)
-  if (data.climb !== undefined) aircraft.climb = Number(data.climb)
-  if (data.onGround !== undefined) aircraft.onGround = data.onGround === 'true'
-
-  // return it
-  return aircraft
+  return document.value
 }

@@ -45,18 +45,18 @@ while (true) {
 
   // set the always stuff
   aircraft.icaoId = event.icaoId,
-  aircraft.dateTime = event.loggedDateTime,
+  aircraft.dateTime = Number(event.loggedDateTime),
   aircraft.radio = event.radio
 
   // set the sometimes stuff
   if (event.callsign !== undefined) aircraft.callsign = event.callsign
-  if (event.altitude !== undefined) aircraft.altitude = event.altitude
-  if (event.latitude !== undefined) aircraft.latitude = event.latitude
-  if (event.longitude !== undefined) aircraft.longitude = event.longitude
-  if (event.velocity !== undefined) aircraft.velocity = event.velocity
-  if (event.heading !== undefined) aircraft.heading = event.heading
-  if (event.climb !== undefined) aircraft.climb = event.climb
-  if (event.onGround !== undefined) aircraft.onGround = event.onGround
+  if (event.altitude !== undefined) aircraft.altitude = Number(event.altitude)
+  if (event.latitude !== undefined) aircraft.latitude = Number(event.latitude)
+  if (event.longitude !== undefined) aircraft.longitude = Number(event.longitude)
+  if (event.velocity !== undefined) aircraft.velocity = Number(event.velocity)
+  if (event.heading !== undefined) aircraft.heading = Number(event.heading)
+  if (event.climb !== undefined) aircraft.climb = Number(event.climb)
+  if (event.onGround !== undefined) aircraft.onGround = event.onGround === 'true'
 
   // set the location for geo searches
   if (event.latitude !== undefined && event.longitude !== undefined) {
@@ -65,6 +65,7 @@ while (true) {
 
   // set the data in Redis with an expiration
   const key = `aircraft:${event.icaoId}`
-  redisClient.hSet(key, aircraft)
+  // redisClient.json.merge(key, '$', aircraft)
+  redisClient.sendCommand([ 'JSON.MERGE', key, '$', JSON.stringify(aircraft) ])
   redisClient.expire(key, aircraftDataLifetime)
 }
