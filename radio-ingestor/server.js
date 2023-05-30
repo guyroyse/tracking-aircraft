@@ -29,6 +29,9 @@ await redisClient.connect()
 const sbs1Client = sbs1.createClient({ host: sbs1Host, port: sbs1Port })
 sbs1Client.on('message', msg => {
 
+  // filter out null message types
+  if (msg.message_type === null) return
+
   // create the event
   const event = {
     radio: radioId,
@@ -44,7 +47,7 @@ sbs1Client.on('message', msg => {
   if (msg.lat !== null) event.latitude = msg.lat.toString()
   if (msg.lon !== null) event.longitude = msg.lon.toString()
   if (msg.ground_speed !== null) event.velocity = msg.ground_speed.toString()
-  if (msg.track !== null) event.heading = msg.track.toString()
+  if (msg.track!== null) event.heading = msg.track.toString()
   if (msg.vertical_rate !== null) event.climb = msg.vertical_rate.toString()
   if (msg.is_on_ground !== null) event.onGround = msg.is_on_ground.toString()
 

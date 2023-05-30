@@ -58,14 +58,10 @@ router.get('/within/:radius/:units/of/:longitude/:latitude', async (req, res) =>
 
 function convertSingleResult(result) {
   const [ document ] = result.documents
-  if (document) return convertDocument(document)
-  return null
+  if (document) return document.value
+  return {}
 }
 
 function convertMultipleResult(result) {
-  return result.documents.map(document => convertDocument(document))
-}
-
-function convertDocument(document) {
-  return document.value
+  return result.documents.map(document => document.value)
 }
