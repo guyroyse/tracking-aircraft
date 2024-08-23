@@ -3,13 +3,13 @@ services:
     build: api-gateway
     ports:
       - "8080:80"
-    depends_on:
-      - flight-ui
-  flight-ui:
-    build: flight-ui
-    depends_on:
-      - flight-api
-      - flight-events
+    # depends_on:
+    #   - flight-ui
+  # flight-ui:
+  #   build: flight-ui
+  #   depends_on:
+  #     - flight-api
+  #     - flight-events
   flight-api:
     build: flight-api
     environment:

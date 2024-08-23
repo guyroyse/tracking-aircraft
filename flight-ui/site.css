@@ -1,6 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
 #map {
-  height: 720px;
-  width: 1280px;
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+#icon-holder {
+  display: none;
 }
 
 .plane-icon {
@@ -8,4 +20,15 @@
   width: 16px;
   background-size: 16px 16px;
   background-image: url('plane.png');
+}
+
+.plane-label {
+  font-size: 12px;
+  font-weight: bold;
+  font-family: "Space Mono", monospace;
+  color: #FF4438;
+  background-color: #FFF;
+  padding: 2px 8px;
+  border-radius: 2px;
+  /* border: 1px solid #091A23; */
 }
