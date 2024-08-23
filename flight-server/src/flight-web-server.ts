@@ -1,4 +1,4 @@
-import { FLIGHT_SERVER_PORT } from './config'
+import { FLIGHT_SERVER_PORT } from './_config'
 
 import cors from 'cors'
 import express, { Express, Router } from 'express'

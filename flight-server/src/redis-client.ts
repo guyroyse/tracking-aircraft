@@ -1,4 +1,4 @@
-import { AIRCRAFT_STATUS_INDEX, AIRCRAFT_STATUS_PREFIX, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from './config.js'
+import { AIRCRAFT_STATUS_INDEX, AIRCRAFT_STATUS_PREFIX, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from './_config.js'
 
 import { createClient, ErrorReply, SchemaFieldTypes } from 'redis'
 

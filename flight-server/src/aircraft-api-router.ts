@@ -1,4 +1,4 @@
-import { AIRCRAFT_STATUS_INDEX } from './config'
+import { AIRCRAFT_STATUS_INDEX } from './_config'
 
 import { Router } from 'express'
 import { SearchReply } from 'redis'

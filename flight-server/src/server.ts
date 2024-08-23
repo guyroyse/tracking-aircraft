@@ -1,4 +1,4 @@
-import { AIRCRAFT_STATUS_TTL, AIRCRAFT_STATUS_PREFIX } from './config'
+import { AIRCRAFT_STATUS_TTL, AIRCRAFT_STATUS_PREFIX } from './_config'
 
 import { AircraftEventConsumer } from './aircraft-event-consumer'
 import { FlightWebServer } from './flight-web-server'

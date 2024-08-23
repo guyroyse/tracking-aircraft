@@ -1,4 +1,4 @@
-import { AIRCRAFT_STREAM_KEY } from './config'
+import { AIRCRAFT_STREAM_KEY } from './_config'
 
 import { AircraftStatus } from './aircraft-status'
 import { redis, RedisClient } from './redis-client'

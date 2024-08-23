@@ -1,3 +1,5 @@
+import { createClient } from 'redis';
+export type RedisClient = ReturnType<typeof createClient>;
 export declare const redis: import("@redis/client").RedisClientType<{
     graph: {
         CONFIG_GET: typeof import("@redis/graph/dist/commands/CONFIG_GET.js");
