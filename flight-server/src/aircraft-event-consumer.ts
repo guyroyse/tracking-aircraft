@@ -1,5 +1,6 @@
-import { aircraftDataLifetime, aircraftPrefix, streamKey } from './config'
+import { AIRCRAFT_STREAM_KEY } from './config'
 
+import { AircraftStatus } from './aircraft-status'
 import { redis, RedisClient } from './redis-client'
 
 type StreamMessage = {
@@ -12,21 +13,6 @@ type StreamMessage = {
 type StreamEvent = {
   name: string
   messages: StreamMessage[]
-}
-
-export type AircraftStatus = {
-  icaoId: string
-  dateTime: number
-  radio: string
-  callsign?: string
-  altitude?: number
-  latitude?: number
-  longitude?: number
-  location?: string
-  velocity?: number
-  heading?: number
-  climb?: number
-  onGround?: boolean
 }
 
 export type AircraftStatusHandler = (aircraft: AircraftStatus) => Promise<void>
@@ -50,41 +36,43 @@ export class AircraftEventConsumer {
 
   registerHandler(handler: AircraftStatusHandler) {
     this.handlers.add(handler)
+    return this
   }
 
   unregisterHandler(handler: AircraftStatusHandler) {
     this.handlers.delete(handler)
+    return this
   }
 
   async start() {
-    // start with recent events
+    /* start with recent events */
     let currentId = '$'
 
-    // process events forever
+    /* process events forever */
     while (true) {
       const event = await this.fetchNextEvent(currentId)
       if (event) {
-        const aircraft = this.buildAircraft(event)
-        this.handlers.forEach(handler => handler(aircraft))
+        const aircraftStatus = this.buildAircraftStatus(event)
+        this.handlers.forEach(handler => handler(aircraftStatus))
         currentId = this.extractId(event)
       }
     }
   }
 
   private async fetchNextEvent(id: string): Promise<StreamEvent | null> {
-    const readStream = { key: streamKey, id }
+    const readStream = { key: AIRCRAFT_STREAM_KEY, id }
     const options = { BLOCK: 1000, COUNT: 1 }
     const events = await this.redis.xRead(readStream, options)
 
     return events === null || events.length === 0 ? null : (events[0] as StreamEvent)
   }
 
-  extractId(event: StreamEvent): string {
+  private extractId(event: StreamEvent): string {
     const { id } = event.messages[0] as StreamMessage
     return id
   }
 
-  buildAircraft(event: StreamEvent): AircraftStatus {
+  private buildAircraftStatus(event: StreamEvent): AircraftStatus {
     // get the message from the event
     const { message } = event.messages[0] as StreamMessage
 

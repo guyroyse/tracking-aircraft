@@ -1,29 +1,31 @@
-import { aircraftIndex, aircraftPrefix, redisHost, redisPassword, redisPort } from './config.js'
+import { AIRCRAFT_STATUS_INDEX, AIRCRAFT_STATUS_PREFIX, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from './config.js'
 
 import { createClient, ErrorReply, SchemaFieldTypes } from 'redis'
 
-export type RedisClient = ReturnType<typeof createClient>
-
-// connect to Redis
+/* Redis connection options */
 const redisOptions = {
-  socket: { host: redisHost, port: redisPort },
-  password: redisPassword
+  socket: { host: REDIS_HOST, port: REDIS_PORT },
+  password: REDIS_PASSWORD
 }
 
+/* helper type for others */
+export type RedisClient = ReturnType<typeof createClient>
+
+/* connect to Redis */
 export const redis: RedisClient = await createClient(redisOptions)
   .on('error', err => console.log('Redis Client Error', err))
   .connect()
 
-// drop the index if it exists
+/* drop aircraft index if it exists */
 try {
-  await redis.ft.dropIndex(aircraftIndex)
+  await redis.ft.dropIndex(AIRCRAFT_STATUS_INDEX)
 } catch (error) {
   if (error instanceof ErrorReply && error.message !== 'Unknown Index name') throw error
 }
 
-// create the RediSearch index
+/* create the aircraft index */
 await redis.ft.create(
-  aircraftIndex,
+  AIRCRAFT_STATUS_INDEX,
   {
     '$.radio': { type: SchemaFieldTypes.TAG, AS: 'radio' },
     '$.icaoId': { type: SchemaFieldTypes.TAG, AS: 'icaoId' },
@@ -40,6 +42,6 @@ await redis.ft.create(
   },
   {
     ON: 'JSON',
-    PREFIX: aircraftPrefix
+    PREFIX: AIRCRAFT_STATUS_PREFIX
   }
 )
