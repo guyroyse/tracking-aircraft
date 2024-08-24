@@ -18,12 +18,16 @@ export class AircraftMarker {
   constructor(aircraftStatus: AircraftStatus) {
     this._hasLocation = false
 
-    this.leafletPopup = L.popup()
+    this.leafletPopup = L.popup({
+      className: 'font-mono'
+    })
 
     this.leafletTooltip = L.tooltip({
       permanent: true,
-      direction: 'right',
-      offset: L.point(12, 0)
+      direction: 'auto',
+      offset: L.point(12, 0),
+      opacity: 0.9,
+      className: 'font-mono'
     })
 
     this.leafletMarker = L.marker([0, 0], { icon: planeIcons[0] })
@@ -84,21 +88,23 @@ export class AircraftMarker {
   }
 
   updateContent(): void {
-    let content = ''
-
-    content += `ICAO: ${this.buildICAO_Link()}<br>`
-    content += `Flight: ${this.buildFlight_Link() ?? 'unknown'}<br>`
-    content += `Location: ${this.aircraftStatus.location ?? 'unknown'}<br>`
-    content += `Altitude: ${this.aircraftStatus.altitude ?? 'unknown'} ft<br>`
-    content += `Heading: ${this.aircraftStatus.heading ?? 'unknown'} deg<br>`
-    content += `Velocity: ${this.aircraftStatus.velocity ?? 'unknown'} kn<br>`
-    content += `Climb: ${this.aircraftStatus.climb ?? 'unknown'} ft<br>`
+    const content =
+      `<pre>` +
+      `ICAO     : ${this.buildICAO_Link()}<br>` +
+      `Flight   : ${this.buildFlight_Link() ?? 'unknown'}<br>` +
+      `Location : ${this.aircraftStatus.location ?? 'unknown'}<br>` +
+      `Altitude : ${this.aircraftStatus.altitude ?? 'unknown'} ft<br>` +
+      `Heading  : ${this.aircraftStatus.heading ?? 'unknown'} deg<br>` +
+      `Velocity : ${this.aircraftStatus.velocity ?? 'unknown'} kn<br>` +
+      `Climb    : ${this.aircraftStatus.climb ?? 'unknown'} ft<br>` +
+      `Last Msg : ${this.buildLastUpdated()}<br>` +
+      `</pre>`
 
     this.leafletPopup.setContent(content)
   }
 
   updateLabel(): void {
-    const label = this.aircraftStatus.callsign ?? this.aircraftStatus.icaoId
+    const label = `${this.aircraftStatus.callsign ?? this.aircraftStatus.icaoId}`
     this.leafletTooltip.setContent(label)
   }
 
@@ -116,5 +122,10 @@ export class AircraftMarker {
     const url = `https://flightaware.com/live/flight/${callsign}`
     const link = `<a href="${url}" target="_new">${callsign}</a>`
     return link
+  }
+
+  private buildLastUpdated(): string {
+    const lastUpdated = this.aircraftStatus.lastUpdated
+    return new Date(lastUpdated).toLocaleString()
   }
 }

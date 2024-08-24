@@ -1,14 +1,110 @@
 <html>
   <head>
-    <title>Redis Aircraft Tracking Service</title>
+    <title>Realtime Aircraft Tracking</title>
     <link rel="stylesheet" href="src/style.css" />
+    <link rel="icon" href="/favicon.svg" type="image/x-icon" />
     <script src="src/main.ts" type="module" defer></script>
   </head>
+
   <body class="flex flex-col w-full h-full">
-    <nav class="flex-grow-0 bg-redis-dusk text-redis-white w-full p-2 opacity-100">
-      <h1 class="text-xl">Redis Aircraft Tracking Service</h1>
+    <nav class="flex-grow-0 bg-redis-midnight text-redis-dusk-50 text-xl tracking-wide p-3">
+      <ul class="flex flex-row">
+        <li id="map-nav" class="pr-4 hover:text-redis-dusk-30 text-redis-white cursor-pointer">Map</li>
+        <li id="list-nav" class="pr-4 hover:text-redis-dusk-30 cursor-pointer">List</li>
+        <li id="search-nav" class="pr-4 hover:text-redis-dusk-30 cursor-pointer">Search</li>
+      </ul>
     </nav>
-    <div id="map" class="flew-shrink w-full h-full"></div>
-    <div id="icon-holder" class="hidden"></div>
+
+    <main class="flex-shrink w-full h-full overflow-auto">
+      <div id="map" class="w-full h-full"></div>
+      <div id="list" class="hidden w-full h-full text-3xl">
+        <h1>A list goes here</h1>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean a lectus tristique, auctor arcu sit amet,
+          porta odio. Cras et turpis feugiat, rutrum nulla sit amet, sagittis dolor. Aliquam eget lacinia magna, a
+          feugiat tellus. Mauris maximus cursus nisl in mollis. Maecenas eu felis suscipit dui lobortis sagittis. Donec
+          pretium, leo volutpat fringilla rutrum, metus orci commodo ligula, ullamcorper tristique risus diam quis
+          felis. Suspendisse est urna, vulputate non aliquet a, luctus eget risus. Vestibulum vel dignissim elit. Aenean
+          porttitor viverra lectus a mattis. Ut aliquet lorem vitae aliquam ultrices.
+        </p>
+        <p>
+          Nunc fermentum gravida elit nec gravida. Nulla a tellus ex. Duis at dolor non metus mollis sagittis in et
+          metus. Integer a lorem massa. Nulla nec ex iaculis, faucibus nibh in, elementum eros. Etiam at erat a tellus
+          vehicula gravida. Sed sagittis nisl id ex vehicula, non pharetra nibh lacinia. Nullam tempus at justo vitae
+          maximus.
+        </p>
+        <p>
+          Vivamus vitae ligula et nunc dignissim commodo nec quis felis. Nullam sit amet leo hendrerit, ultricies diam
+          a, bibendum ex. In hendrerit risus leo, ut tempus elit interdum in. Etiam mollis purus erat, at rhoncus est
+          vulputate a. Nam ut vestibulum urna. Aliquam nec dictum enim, sit amet viverra tellus. Donec ornare nisl
+          blandit, placerat purus ut, euismod ipsum. Integer maximus et dolor in bibendum. Sed nisi augue, hendrerit nec
+          interdum sed, efficitur at risus. Fusce vitae mauris rhoncus tortor pharetra vestibulum ut ac nibh. Donec eget
+          molestie nisi. Sed vel ligula eu nisl mattis bibendum ut quis nunc. Duis a ipsum ac quam vehicula cursus. Nam
+          tristique turpis sed sem malesuada, quis consequat sapien mattis.
+        </p>
+        <p>
+          Pellentesque luctus sodales eleifend. Ut ac elit ut nisl tincidunt cursus id condimentum risus. Pellentesque
+          habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse potenti.
+          Curabitur vitae tristique magna. Morbi iaculis congue neque, quis tempor odio dapibus vel. Nam efficitur dui
+          non hendrerit venenatis. Ut placerat egestas ipsum, et accumsan leo commodo eleifend. Nunc faucibus tellus ac
+          felis imperdiet porta. Donec vulputate felis sed elementum gravida.
+        </p>
+        <p>
+          Mauris sapien felis, accumsan nec fringilla sed, mollis nec libero. Cras vestibulum elementum elit, eget
+          semper risus malesuada quis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Quisque a est
+          lacinia, ultricies ante aliquet, aliquet nibh. Nulla porta luctus arcu, sed mollis erat fermentum ut. Aliquam
+          ornare ante eu lorem placerat tempus. Cras pharetra varius ipsum eget faucibus. Maecenas quis ipsum in lacus
+          rhoncus mattis.
+        </p>
+        <p>
+          Pellentesque id mauris mi. Duis tristique sem at enim mattis, vel vehicula sapien tincidunt. Nulla maximus
+          sollicitudin dapibus. Pellentesque malesuada metus feugiat ex malesuada vulputate at eu felis. Vivamus tempus
+          est purus, at lacinia turpis ullamcorper at. Morbi laoreet lacus lacus, ut dapibus purus tincidunt eget.
+          Curabitur dignissim, risus vehicula molestie imperdiet, ex enim tristique lorem, in imperdiet metus eros non
+          nulla. Nam sollicitudin est nec nisl fringilla, ultrices rhoncus lectus ultricies. Vestibulum purus nisi,
+          mollis ac aliquet non, tempor quis erat. Mauris eget urna vel nibh sagittis aliquam. Curabitur eget laoreet
+          mi, a posuere eros. Duis pretium est nec purus feugiat, ac pharetra metus pellentesque. Integer euismod arcu a
+          aliquam scelerisque.
+        </p>
+        <p>
+          Ut tincidunt tincidunt auctor. Morbi porttitor augue et erat faucibus blandit. Etiam elementum sem vitae
+          libero posuere dapibus. In id finibus lacus. Vestibulum tempor malesuada placerat. Cras pretium lacinia orci
+          eget fermentum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+          Maecenas quis quam at elit semper sodales. Donec rutrum luctus ex eget semper. Cras lobortis vel est sit amet
+          varius. Nunc nec neque dictum, consequat velit eu, convallis nulla. Sed id elit ac urna tempor consectetur.
+          Aliquam vulputate risus nec turpis aliquam, vitae blandit urna faucibus. Integer nec sem ultricies, hendrerit
+          dui a, malesuada lacus.
+        </p>
+        <p>
+          Donec id justo ullamcorper, vestibulum sem quis, placerat ante. Nam eleifend erat eu ante sodales feugiat.
+          Nulla facilisi. Ut ac congue turpis, eget dictum diam. Pellentesque habitant morbi tristique senectus et netus
+          et malesuada fames ac turpis egestas. Nulla mollis porta quam sed aliquet. Ut pharetra ligula a lacus rutrum,
+          non tempor lacus posuere. Praesent accumsan ullamcorper ligula eu placerat. Pellentesque in hendrerit erat.
+          Nulla facilisi.
+        </p>
+        <p>
+          Donec aliquam a metus quis lacinia. Proin posuere quam et eros convallis commodo id quis lorem. Vestibulum
+          ipsum sem, dictum quis purus ut, fringilla pellentesque nisl. Etiam in feugiat sem. Nullam bibendum nibh
+          neque, non pretium ante pulvinar non. Duis non dapibus risus. Suspendisse maximus ligula tellus, ut pulvinar
+          dolor mollis id. Fusce tempor eget quam at semper. Etiam luctus diam nec velit fermentum vulputate. Quisque
+          facilisis purus in elit maximus, mollis imperdiet nibh imperdiet. Aenean tincidunt ligula id mauris vehicula,
+          id facilisis risus cursus. Ut vel auctor leo.
+        </p>
+        <p>
+          Nulla cursus ligula et posuere elementum. Proin nec purus a augue ornare dictum. Mauris tincidunt dignissim
+          enim, pharetra interdum nisl interdum et. Quisque metus eros, accumsan et justo a, dapibus euismod urna. Duis
+          in erat eget purus egestas posuere. Cras rhoncus eros ut viverra convallis. Fusce arcu orci, semper ac
+          accumsan at, commodo quis mi.
+        </p>
+      </div>
+      <div id="search" class="hidden w-full h-full">
+        <h1>A search form goes here</h1>
+      </div>
+    </main>
+
+    <footer class="flex-grow-0 flex flow-row bg-redis-hyper text-redis-white w-full p-4 opacity-100">
+      <img src="/redis-logo-white.svg" class="flex-grow-0 h-8" />
+      <h1 class="flex-grow text-right text-2xl font-bold tracking-wide">Realtime Aircraft Tracking</h1>
+    </footer>
   </body>
 </html>
