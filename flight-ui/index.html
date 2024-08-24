@@ -1,20 +1,14 @@
 <html>
   <head>
     <title>Redis Aircraft Tracking Service</title>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-      crossorigin=""/>
-    <link rel="stylesheet" href="site.css">
-    <script
-      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-      crossorigin=""></script>
-    <script src="app.js" defer></script>
+    <link rel="stylesheet" href="src/style.css" />
+    <script src="src/main.ts" type="module" defer></script>
   </head>
-  <body>
-    <div id="map"></div>
-    <div id="icon-holder"></div>
+  <body class="flex flex-col w-full h-full">
+    <nav class="flex-grow-0 bg-redis-dusk text-redis-white w-full p-2 opacity-100">
+      <h1 class="text-xl">Redis Aircraft Tracking Service</h1>
+    </nav>
+    <div id="map" class="flew-shrink w-full h-full"></div>
+    <div id="icon-holder" class="hidden"></div>
   </body>
 </html>
