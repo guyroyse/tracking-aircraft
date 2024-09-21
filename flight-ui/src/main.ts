@@ -5,15 +5,6 @@ import 'leaflet/dist/leaflet.css'
 import { AircraftStatus } from './aircraft-status'
 import { AircraftMap } from './aircraft-map'
 
-import { Menu } from './menu'
-
-/* set up the menu */
-const menu = Menu.create()
-menu.bind('map-nav', 'map')
-menu.bind('list-nav', 'list')
-menu.bind('search-nav', 'search')
-menu.start()
-
 /* create the map */
 const aircraftMap = AircraftMap.create('map')
 

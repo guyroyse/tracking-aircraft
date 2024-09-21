@@ -6,5 +6,10 @@
   "arrowParens": "avoid",
   "printWidth": 120,
   "tabWidth": 2,
-  "useTabs": false
+  "useTabs": false,
+  "svelteStrictMode": true,
+  "svelteBracketNewLine": true,
+  "svelteAllowShorthand": true,
+  "plugins": ["prettier-plugin-svelte"],
+  "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }]
 }

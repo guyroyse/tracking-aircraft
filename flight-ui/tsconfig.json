@@ -1,4 +1,5 @@
 {
+  "extends": "@tsconfig/svelte/tsconfig.json",
   "compilerOptions": {
     "target": "ES2020",
     "module": "ESNext",
@@ -10,8 +11,14 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "types": ["svelte"],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "verbatimModuleSyntax": true
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts", "src/**/*.svelte"],
   "exclude": ["node_modules"]
 }
