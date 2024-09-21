@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 </script>
 
 <main class="flex-shrink w-full h-full overflow-auto">

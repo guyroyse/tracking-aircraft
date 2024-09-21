@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   const footerText = 'Realtime Aircraft Tracking'
 </script>
 

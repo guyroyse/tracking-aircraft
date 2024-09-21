@@ -1,6 +1,8 @@
 <script lang="ts">
-  import Header from './Header.svelte'
-  import Footer from './Footer.svelte'
+  import 'leaflet/dist/leaflet.css'
+
+  import Header from './components/Header.svelte'
+  import Footer from './components/Footer.svelte'
 
   import Router from 'svelte-spa-router'
 
