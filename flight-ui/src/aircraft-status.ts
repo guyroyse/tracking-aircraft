@@ -1,3 +1,5 @@
+import { ICON_IDLE_TIME } from '@/config'
+
 export class AircraftStatus {
   icaoId: string
   lastUpdated: number
@@ -10,7 +12,7 @@ export class AircraftStatus {
   velocity: number | null = null
   climb: number | null = null
 
-  constructor(icaoId: string) {
+  private constructor(icaoId: string) {
     this.icaoId = icaoId
     this.lastUpdated = new Date().getTime()
   }
@@ -31,6 +33,7 @@ export class AircraftStatus {
   }
 
   merge(that: AircraftStatus) {
+    this.lastUpdated = that.lastUpdated
     this.callsign = that.callsign ?? this.callsign
     this.radio = that.radio ?? this.radio
     this.latitude = that.latitude ?? this.latitude
@@ -39,7 +42,6 @@ export class AircraftStatus {
     this.heading = that.heading ?? this.heading
     this.velocity = that.velocity ?? this.velocity
     this.climb = that.climb ?? this.climb
-    this.lastUpdated = new Date().getTime()
   }
 
   get latlng(): [number, number] | null {
@@ -48,5 +50,10 @@ export class AircraftStatus {
 
   get location(): string | null {
     return this.latlng?.join(',') ?? null
+  }
+
+  get isExpired(): boolean {
+    const now = new Date().getTime()
+    return now - this.lastUpdated > ICON_IDLE_TIME
   }
 }

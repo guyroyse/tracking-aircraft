@@ -1,9 +1,7 @@
-import { MAP_ACCESS_TOKEN } from './_config'
-
 import L from 'leaflet'
 
-import { AircraftStatus } from './aircraft-status'
-import { AircraftMarker } from './aircraft-marker'
+import { AircraftStatus } from '@/aircraft-status'
+import { AircraftMarker } from '@/aircraft-marker'
 
 const homeIcon = L.icon({ iconUrl: 'icons/home.png', iconSize: [16, 16] })
 
@@ -17,7 +15,7 @@ export class AircraftMap {
   private map: L.Map
   private markers: Map<string, AircraftMarker> = new Map()
 
-  constructor(map: L.Map) {
+  private constructor(map: L.Map) {
     this.map = map
     this.markers = new Map()
   }
@@ -30,15 +28,12 @@ export class AircraftMap {
   }
 
   private addTileLayer(): void {
-    const urlTemplate = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}'
+    const urlTemplate = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
     const options = {
-      accessToken: MAP_ACCESS_TOKEN,
-      id: 'mapbox/streets-v11',
       maxZoom: 18,
       tileSize: 512,
       zoomOffset: -1,
-      attribution:
-        'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }
 
     const titleLayer = L.tileLayer(urlTemplate, options)
@@ -54,13 +49,20 @@ export class AircraftMap {
     marker.addTo(this.map)
   }
 
+  fetchPlanes(): AircraftStatus[] {
+    return Array.from(this.markers.values()).map(marker => marker.aircraftStatus)
+  }
+
   addUpdatePlane(aircraftStatus: AircraftStatus): void {
     const foundMarker = this.markers.get(aircraftStatus.icaoId)
     if (foundMarker) {
       const hadLocation = foundMarker.hasLocation
       foundMarker.update(aircraftStatus)
       const hasLocation = foundMarker.hasLocation
-      if (!hadLocation && hasLocation) foundMarker.leafletMarker.addTo(this.map)
+      if (!hadLocation && hasLocation) {
+        console.log(new Date().toTimeString(), `Adding new aircraft to map ${aircraftStatus.icaoId}`)
+        foundMarker.leafletMarker.addTo(this.map)
+      }
     } else {
       const marker = AircraftMarker.create(aircraftStatus)
       if (marker.hasLocation) marker.leafletMarker.addTo(this.map)
@@ -68,9 +70,22 @@ export class AircraftMap {
     }
   }
 
+  removePlane(icaoId: string): void {
+    const marker = this.markers.get(icaoId)
+    if (marker) {
+      marker.remove()
+      this.markers.delete(icaoId)
+      console.log(new Date().toTimeString(), `Removed expired aircraft from map ${icaoId}`)
+    }
+  }
+
   removeExpiredMarkers() {
     this.markers.forEach(marker => {
       if (marker.isExpired) marker.remove()
     })
+  }
+
+  destroy() {
+    this.map.remove()
   }
 }

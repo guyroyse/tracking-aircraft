@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Menu from './Menu/Menu.svelte'
+  import Menu from '@/components/Menu/Menu.svelte'
 </script>
 
 <header>

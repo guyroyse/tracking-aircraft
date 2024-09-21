@@ -1,8 +1,7 @@
-import { FLIGHT_SERVER_HOST, ICON_IDLE_TIME } from './_config'
-
 import L from 'leaflet'
 
-import { AircraftStatus } from './aircraft-status'
+import { FLIGHT_SERVER_HOST } from '@/config'
+import { AircraftStatus } from '@/aircraft-status'
 
 const planeIcons: L.Icon[] = [...Array(24).keys()].map(n =>
   L.icon({ iconUrl: `icons/plane-${n * 15}.png`, iconSize: [18, 18] })
@@ -10,12 +9,12 @@ const planeIcons: L.Icon[] = [...Array(24).keys()].map(n =>
 
 export class AircraftMarker {
   private _hasLocation: boolean
-  private aircraftStatus: AircraftStatus
+  readonly aircraftStatus: AircraftStatus
   readonly leafletMarker: L.Marker
   readonly leafletPopup: L.Popup
   readonly leafletTooltip: L.Tooltip
 
-  constructor(aircraftStatus: AircraftStatus) {
+  private constructor(aircraftStatus: AircraftStatus) {
     this._hasLocation = false
 
     this.leafletPopup = L.popup({
@@ -52,8 +51,7 @@ export class AircraftMarker {
   }
 
   get isExpired(): boolean {
-    const now = new Date().getTime()
-    return now - this.aircraftStatus.lastUpdated > ICON_IDLE_TIME
+    return this.aircraftStatus.isExpired
   }
 
   update(aircraftStatus: AircraftStatus): void {

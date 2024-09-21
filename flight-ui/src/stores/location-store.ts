@@ -7,11 +7,11 @@ type Position = {
   loading: boolean
 }
 
-export const location = readable(
+export const locationStore = readable(
   {
     latitude: 0,
     longitude: 0,
-    error: '',
+    error: null,
     loading: true
   } as Position,
   set => {
