@@ -1,4 +1,4 @@
-import { ICON_IDLE_TIME } from '../config'
+import { AIRCRAFT_IDLE_TIME } from '../config'
 
 export class AircraftStatus {
   icaoId: string
@@ -54,6 +54,6 @@ export class AircraftStatus {
 
   get isExpired(): boolean {
     const now = new Date().getTime()
-    return now - this.lastUpdated > ICON_IDLE_TIME
+    return now - this.lastUpdated > AIRCRAFT_IDLE_TIME
   }
 }

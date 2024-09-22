@@ -20,8 +20,8 @@ export class AircraftMap {
     this.markers = new Map()
   }
 
-  static create(mapElementID: string = 'map'): AircraftMap {
-    const leafletMap = L.map(mapElementID)
+  static create(element: HTMLElement): AircraftMap {
+    const leafletMap = L.map(element)
     const aircraftMap = new AircraftMap(leafletMap)
     aircraftMap.addTileLayer()
     return aircraftMap
