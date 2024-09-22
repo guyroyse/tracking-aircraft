@@ -1,4 +1,4 @@
-import { ICON_IDLE_TIME } from '@/config'
+import { ICON_IDLE_TIME } from '../config'
 
 export class AircraftStatus {
   icaoId: string

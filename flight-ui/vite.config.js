@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [svelte()],
   resolve: {
     alias: {
-      '@': '/src'
+      $src: '/src'
     }
   }
 })

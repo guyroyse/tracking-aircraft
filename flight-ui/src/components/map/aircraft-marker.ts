@@ -1,7 +1,7 @@
 import L from 'leaflet'
 
-import { FLIGHT_SERVER_HOST } from '@/config'
-import { AircraftStatus } from '@/aircraft-status'
+import { FLIGHT_SERVER_HOST } from '../../config'
+import { AircraftStatus } from '../../common/aircraft-status'
 
 const planeIcons: L.Icon[] = [...Array(24).keys()].map(n =>
   L.icon({ iconUrl: `icons/plane-${n * 15}.png`, iconSize: [18, 18] })

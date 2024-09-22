@@ -15,7 +15,7 @@
     "types": ["svelte"],
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "$src": ["src/*"]
     },
     "verbatimModuleSyntax": true
   },

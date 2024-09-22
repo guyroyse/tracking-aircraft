@@ -1,9 +1,10 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
 
-  import { AircraftMap } from '@/aircraft-map'
-  import { locationStore } from '@/stores/location-store'
-  import { aircraftStore } from '@/stores/aircraft-store'
+  import { locationStore } from '../../stores/location-store'
+  import { aircraftStore } from '../../stores/aircraft-store'
+
+  import { AircraftMap } from './aircraft-map'
 
   let aircraftMap: AircraftMap
 

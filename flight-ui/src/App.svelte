@@ -2,11 +2,12 @@
   import 'leaflet/dist/leaflet.css'
   import Router from 'svelte-spa-router'
 
-  import Header from '@/components/Header.svelte'
-  import AircraftMap from '@/AircraftMap.svelte'
-  import AircraftList from '@/AircraftList.svelte'
-  import AircraftSearch from '@/AircraftSearch.svelte'
-  import Footer from '@/components/Footer.svelte'
+  import Header from './components/layout/Header.svelte'
+  import Footer from './components/layout/Footer.svelte'
+
+  import AircraftMap from './components/map/AircraftMap.svelte'
+  import AircraftList from './components/list/AircraftList.svelte'
+  import AircraftSearch from './components/search/AircraftSearch.svelte'
 
   const routes = {
     '/': AircraftMap,

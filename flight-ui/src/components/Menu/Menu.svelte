@@ -1,5 +1,5 @@
 <script lang="ts">
-  import MenuItem from '@/components/Menu/MenuItem.svelte'
+  import MenuItem from './MenuItem.svelte'
 </script>
 
 <nav class="flex-grow-0 bg-redis-midnight text-redis-dusk-50 text-xl tracking-wide p-3">

@@ -1,7 +1,7 @@
 import L from 'leaflet'
 
-import { AircraftStatus } from '@/aircraft-status'
-import { AircraftMarker } from '@/aircraft-marker'
+import { AircraftMarker } from './aircraft-marker'
+import { AircraftStatus } from '../../common/aircraft-status'
 
 const homeIcon = L.icon({ iconUrl: 'icons/home.png', iconSize: [16, 16] })
 
