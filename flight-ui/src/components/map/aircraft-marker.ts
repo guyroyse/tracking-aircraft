@@ -90,12 +90,12 @@ export class AircraftMarker {
       `<pre>` +
       `ICAO     : ${this.buildICAO_Link()}<br>` +
       `Flight   : ${this.buildFlight_Link() ?? 'unknown'}<br>` +
-      `Location : ${this.aircraftStatus.location ?? 'unknown'}<br>` +
-      `Altitude : ${this.aircraftStatus.altitude ?? 'unknown'} ft<br>` +
-      `Heading  : ${this.aircraftStatus.heading ?? 'unknown'} deg<br>` +
-      `Velocity : ${this.aircraftStatus.velocity ?? 'unknown'} kn<br>` +
-      `Climb    : ${this.aircraftStatus.climb ?? 'unknown'} ft<br>` +
-      `Last Msg : ${this.buildLastUpdated()}<br>` +
+      `Location : ${this.aircraftStatus.displayLocation}<br>` +
+      `Altitude : ${this.aircraftStatus.displayAltitude}<br>` +
+      `Heading  : ${this.aircraftStatus.displayHeading}<br>` +
+      `Velocity : ${this.aircraftStatus.displayVelocity}<br>` +
+      `Climb    : ${this.aircraftStatus.displayClimb}<br>` +
+      `Last Msg : ${this.aircraftStatus.displayLastUpdatedTime}<br>` +
       `</pre>`
 
     this.leafletPopup.setContent(content)
@@ -120,10 +120,5 @@ export class AircraftMarker {
     const url = `https://flightaware.com/live/flight/${callsign}`
     const link = `<a href="${url}" target="_new">${callsign}</a>`
     return link
-  }
-
-  private buildLastUpdated(): string {
-    const lastUpdated = this.aircraftStatus.lastUpdated
-    return new Date(lastUpdated).toLocaleString()
   }
 }

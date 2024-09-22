@@ -17,5 +17,7 @@
 </script>
 
 <Header />
-<Router {routes} />
+<main class="flex-shrink w-full h-full overflow-auto text-redis-midnight bg-redis-white">
+  <Router {routes} />
+</main>
 <Footer />

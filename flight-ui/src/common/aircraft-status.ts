@@ -44,6 +44,45 @@ export class AircraftStatus {
     this.climb = that.climb ?? this.climb
   }
 
+  get displayCallsign(): string {
+    return this.callsign ?? 'unknown'
+  }
+
+  get displayLocation(): string {
+    return this.latitude === null || this.longitude === null
+      ? 'unknown'
+      : `${this.displayLatitude},${this.displayLongitude}`
+  }
+
+  get displayLatitude(): string {
+    return this.latitude === null ? 'unknown' : `${this.latitude.toFixed(4)}`
+  }
+
+  get displayLongitude(): string {
+    return this.longitude === null ? 'unknown' : `${this.longitude.toFixed(4)}`
+  }
+
+  get displayAltitude(): string {
+    return this.altitude === null ? 'unknown' : `${this.altitude.toLocaleString()} ft`
+  }
+
+  get displayHeading(): string {
+    return this.heading === null ? 'unknown' : `${this.heading} deg`
+  }
+
+  get displayVelocity(): string {
+    return this.velocity === null ? 'unknown' : `${this.velocity} kn`
+  }
+
+  get displayClimb(): string {
+    return this.climb === null ? 'unknown' : `${this.climb} ft`
+  }
+
+  get displayLastUpdatedTime(): string {
+    const lastUpdated = new Date(this.lastUpdated)
+    return lastUpdated.toLocaleTimeString()
+  }
+
   get latlng(): [number, number] | null {
     return this.latitude === null || this.longitude === null ? null : [this.latitude, this.longitude]
   }
