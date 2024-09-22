@@ -36,8 +36,8 @@ export class AircraftMap {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }
 
-    const titleLayer = L.tileLayer(urlTemplate, options)
-    titleLayer.addTo(this.map)
+    const tileLayer = L.tileLayer(urlTemplate, options)
+    tileLayer.addTo(this.map)
   }
 
   centerView(latitude: number, longitude: number, zoom: number = 8): void {
@@ -83,9 +83,5 @@ export class AircraftMap {
     this.markers.forEach(marker => {
       if (marker.isExpired) marker.remove()
     })
-  }
-
-  destroy() {
-    this.map.remove()
   }
 }
