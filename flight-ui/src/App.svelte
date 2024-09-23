@@ -8,11 +8,13 @@
   import AircraftMap from './components/map/AircraftMap.svelte'
   import AircraftList from './components/list/AircraftList.svelte'
   import AircraftSearch from './components/search/AircraftSearch.svelte'
+  import AircraftDetail from './components/detail/AircraftDetail.svelte'
 
   const routes = {
     '/': AircraftMap,
     '/list': AircraftList,
-    '/search': AircraftSearch
+    '/search': AircraftSearch,
+    '/aircraft/:icaoId': AircraftDetail
   }
 </script>
 

@@ -18,7 +18,8 @@ export class AircraftMarker {
     this._hasLocation = false
 
     this.leafletPopup = L.popup({
-      className: 'font-mono'
+      className: 'font-mono',
+      interactive: true
     })
 
     this.leafletTooltip = L.tooltip({
@@ -88,8 +89,8 @@ export class AircraftMarker {
   updateContent(): void {
     const content =
       `<pre>` +
-      `ICAO     : ${this.buildICAO_Link()}<br>` +
-      `Flight   : ${this.buildFlight_Link() ?? 'unknown'}<br>` +
+      `ICAO     : ${this.aircraftStatus.linkIcao}<br>` +
+      `Flight   : ${this.aircraftStatus.linkCallsign}<br>` +
       `Location : ${this.aircraftStatus.displayLocation}<br>` +
       `Altitude : ${this.aircraftStatus.displayAltitude}<br>` +
       `Heading  : ${this.aircraftStatus.displayHeading}<br>` +

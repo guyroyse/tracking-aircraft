@@ -83,6 +83,18 @@ export class AircraftStatus {
     return lastUpdated.toLocaleTimeString()
   }
 
+  get linkIcao(): string {
+    const url = `#/aircraft/${this.icaoId}`
+    return `<a class="hover:underline hover:text-redis-deep-hyper text-redis-dusk-90" href="${url}">${this.icaoId}</a>`
+  }
+
+  get linkCallsign(): string {
+    if (!this.callsign) return 'unknown'
+    const url = `https://flightaware.com/live/flight/${this.callsign}`
+    const link = `<a class="hover:underline hover:text-redis-deep-hyper text-redis-dusk-90" href="${url}" target="_new">${this.callsign}</a>`
+    return link
+  }
+
   get latlng(): [number, number] | null {
     return this.latitude === null || this.longitude === null ? null : [this.latitude, this.longitude]
   }
