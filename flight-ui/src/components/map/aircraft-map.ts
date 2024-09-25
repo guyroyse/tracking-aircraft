@@ -13,7 +13,7 @@ for (let i = 0; i < 24; i++) {
 
 export class AircraftMap {
   private map: L.Map
-  private markers: Map<string, AircraftMarker> = new Map()
+  private markers: Map<string, AircraftMarker>
 
   private constructor(map: L.Map) {
     this.map = map
@@ -83,5 +83,10 @@ export class AircraftMap {
     this.markers.forEach(marker => {
       if (marker.isExpired) marker.remove()
     })
+  }
+
+  destroy(): void {
+    this.markers.forEach(marker => marker.remove())
+    this.map.remove()
   }
 }

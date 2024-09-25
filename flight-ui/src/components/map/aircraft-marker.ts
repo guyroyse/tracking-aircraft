@@ -106,20 +106,4 @@ export class AircraftMarker {
     const label = `${this.aircraftStatus.callsign ?? this.aircraftStatus.icaoId}`
     this.leafletTooltip.setContent(label)
   }
-
-  private buildICAO_Link(): string {
-    const icaoId = this.aircraftStatus.icaoId
-    const url = `${FLIGHT_SERVER_HOST}/aircraft/icao/${icaoId}`
-    return `<a href="${url}" target="_new">${icaoId}</a>`
-  }
-
-  private buildFlight_Link(): string | null {
-    const callsign = this.aircraftStatus.callsign
-
-    if (!callsign) return null
-
-    const url = `https://flightaware.com/live/flight/${callsign}`
-    const link = `<a href="${url}" target="_new">${callsign}</a>`
-    return link
-  }
 }

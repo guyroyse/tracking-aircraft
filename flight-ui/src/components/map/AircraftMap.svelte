@@ -6,12 +6,6 @@
 
   let aircraftMap: AircraftMap
 
-  /* We just need to center the map once. */
-  let mapCentered = false
-
-  /* we'll need these when the map gets destroyed */
-  let currentPosition = { latitude: 0, longitude: 0, zoom: 0 }
-
   function createMap(element: HTMLElement) {
     /* Create the map and bind it to the element. */
     aircraftMap = AircraftMap.create(element)
@@ -27,17 +21,22 @@
     })
 
     /* Subscribe to the aircraft store and update the planes on the map. */
-    const aircraftUnsubscribe = aircraftStore.subscribe(aircraft => {
+    const aircraftUnsubscribe = aircraftStore.subscribe(aircraftStatuses => {
+      console.log('Aircraft status count', aircraftStatuses.size)
       /* Remove planes that are no longer in the store. */
       for (const plane of aircraftMap.fetchPlanes()) {
-        const status = aircraft.get(plane.icaoId)
-        if (!status) {
-          aircraftMap.removePlane(plane.icaoId)
-        }
+        const status = aircraftStatuses.get(plane.icaoId)
+        if (!status) aircraftMap.removePlane(plane.icaoId)
       }
 
+      /*
+        TODO: This is the problem. We need to only update aircraft
+        that have changed. This might need to be done in the aircraft
+        store somehow.
+      */
+
       /* Add or update planes that *are* in the store. */
-      for (const [_, status] of aircraft) {
+      for (const [_, status] of aircraftStatuses) {
         aircraftMap.addUpdatePlane(status)
       }
     })

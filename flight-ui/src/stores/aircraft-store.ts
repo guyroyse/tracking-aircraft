@@ -1,48 +1,44 @@
 import { writable } from 'svelte/store'
 
-import { FLIGHT_SERVER_WS } from '../config'
-
 import { AircraftStatus } from '../common/aircraft-status'
 
-type AircraftStatuses = Map<string, AircraftStatus>
-
-const aircraftStatuses: AircraftStatuses = new Map()
+const aircraftStatuses: Map<string, AircraftStatus> = new Map()
 const aircraftStore = writable(aircraftStatuses)
 
-/* Handle incoming aircraft transponder events. */
-let ws: WebSocket = new WebSocket(FLIGHT_SERVER_WS)
-ws.onmessage = processEvent
+function addOrUpdateAircraft(receivedStatus: AircraftStatus) {
+  aircraftStore.update(aircraftStatuses => {
+    /* Look for the aircraft in question. */
+    const foundStatus = aircraftStatuses.get(receivedStatus.icaoId)
 
-/* Set up the timer to expire aircraft we haven't heard from in a while. */
-setInterval(expireAircraft, 5000)
+    if (foundStatus) {
+      /* If found, merge the received status with the existing status. */
+      foundStatus.merge(receivedStatus)
+    } else {
+      /* Otherwise, add the new status. */
+      console.log(new Date().toTimeString(), `Adding new aircraft ${receivedStatus.icaoId}`)
+      aircraftStatuses.set(receivedStatus.icaoId, receivedStatus)
+    }
 
-function processEvent(event: MessageEvent) {
-  const receivedStatus = AircraftStatus.fromJSON(event.data)
-  const foundStatus = aircraftStatuses.get(receivedStatus.icaoId)
-
-  /* If found, merge the received status with the existing status. Otherwise, add the new status. */
-  if (foundStatus) {
-    foundStatus.merge(receivedStatus)
-  } else {
-    console.log(new Date().toTimeString(), `Adding new aircraft ${receivedStatus.icaoId}`)
-    aircraftStatuses.set(receivedStatus.icaoId, receivedStatus)
-  }
-
-  aircraftStore.set(aircraftStatuses)
+    /* Return the updated statuses. */
+    return aircraftStatuses
+  })
 }
 
-function expireAircraft() {
-  let aircraftRemoved = false
+function removeAircraft(icaoId: string) {
+  aircraftStore.update(aircraftStatuses => {
+    console.log(new Date().toTimeString(), `Removing aircraft ${icaoId}`)
+    aircraftStatuses.delete(icaoId)
+    return aircraftStatuses
+  })
+}
 
+function removeExpiredAircraft() {
   for (const [icaoId, status] of aircraftStatuses) {
     if (status.isExpired) {
-      console.log(new Date().toTimeString(), `Removing expired aircraft ${icaoId}`)
-      aircraftStatuses.delete(icaoId)
-      aircraftRemoved = true
+      console.log(new Date().toTimeString(), `Expired aircraft found ${icaoId}`)
+      removeAircraft(icaoId)
     }
   }
-
-  if (aircraftRemoved) aircraftStore.set(aircraftStatuses)
 }
 
-export { aircraftStore }
+export { aircraftStore, addOrUpdateAircraft, removeAircraft, removeExpiredAircraft }
