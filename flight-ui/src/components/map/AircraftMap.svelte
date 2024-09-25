@@ -3,6 +3,7 @@
   import { aircraftStore } from '../../stores/aircraft-store'
 
   import { AircraftMap } from './aircraft-map'
+  import type { AircraftStatusData } from '../../common/aircraft-status'
 
   let aircraftMap: AircraftMap
 
@@ -22,10 +23,10 @@
 
     /* Subscribe to the aircraft store and update the planes on the map. */
     const aircraftUnsubscribe = aircraftStore.subscribe(aircraftStatuses => {
-      console.log('Aircraft status count', aircraftStatuses.size)
+      console.log('Aircraft status count', Object.keys(aircraftStatuses).length)
       /* Remove planes that are no longer in the store. */
       for (const plane of aircraftMap.fetchPlanes()) {
-        const status = aircraftStatuses.get(plane.icaoId)
+        const status = aircraftStatuses[plane.icaoId]
         if (!status) aircraftMap.removePlane(plane.icaoId)
       }
 
@@ -36,7 +37,8 @@
       */
 
       /* Add or update planes that *are* in the store. */
-      for (const [_, status] of aircraftStatuses) {
+      for (const icaoId in aircraftStatuses) {
+        const status = aircraftStatuses[icaoId] as AircraftStatusData
         aircraftMap.addUpdatePlane(status)
       }
     })

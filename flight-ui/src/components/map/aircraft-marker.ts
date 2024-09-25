@@ -1,7 +1,7 @@
 import L from 'leaflet'
 
-import { FLIGHT_SERVER_HOST } from '../../config'
 import { AircraftStatus } from '../../common/aircraft-status'
+import type { AircraftStatusData } from '../../common/aircraft-status'
 
 const planeIcons: L.Icon[] = [...Array(24).keys()].map(n =>
   L.icon({ iconUrl: `icons/plane-${n * 15}.png`, iconSize: [18, 18] })
@@ -9,12 +9,12 @@ const planeIcons: L.Icon[] = [...Array(24).keys()].map(n =>
 
 export class AircraftMarker {
   private _hasLocation: boolean
-  readonly aircraftStatus: AircraftStatus
+  public aircraftStatus: AircraftStatusData
   readonly leafletMarker: L.Marker
   readonly leafletPopup: L.Popup
   readonly leafletTooltip: L.Tooltip
 
-  private constructor(aircraftStatus: AircraftStatus) {
+  private constructor(aircraftStatus: AircraftStatusData) {
     this._hasLocation = false
 
     this.leafletPopup = L.popup({
@@ -38,7 +38,7 @@ export class AircraftMarker {
     this.update(aircraftStatus)
   }
 
-  static create(aircraftStatus: AircraftStatus): AircraftMarker {
+  static create(aircraftStatus: AircraftStatusData): AircraftMarker {
     const marker = new AircraftMarker(aircraftStatus)
     return marker
   }
@@ -52,11 +52,11 @@ export class AircraftMarker {
   }
 
   get isExpired(): boolean {
-    return this.aircraftStatus.isExpired
+    return AircraftStatus.isExpired(this.aircraftStatus)
   }
 
-  update(aircraftStatus: AircraftStatus): void {
-    this.aircraftStatus.merge(aircraftStatus)
+  update(aircraftStatus: AircraftStatusData): void {
+    this.aircraftStatus = AircraftStatus.merge(this.aircraftStatus, aircraftStatus)
 
     this.updateLocation()
     this.updateHeading()
@@ -69,7 +69,7 @@ export class AircraftMarker {
   }
 
   updateLocation(): void {
-    const { latlng } = this.aircraftStatus
+    const latlng = AircraftStatus.latlng(this.aircraftStatus)
     if (latlng) {
       this.hasLocation = true
       this.leafletMarker.setLatLng(latlng)
@@ -89,14 +89,14 @@ export class AircraftMarker {
   updateContent(): void {
     const content =
       `<pre>` +
-      `ICAO     : ${this.aircraftStatus.linkIcao}<br>` +
-      `Flight   : ${this.aircraftStatus.linkCallsign}<br>` +
-      `Location : ${this.aircraftStatus.displayLocation}<br>` +
-      `Altitude : ${this.aircraftStatus.displayAltitude}<br>` +
-      `Heading  : ${this.aircraftStatus.displayHeading}<br>` +
-      `Velocity : ${this.aircraftStatus.displayVelocity}<br>` +
-      `Climb    : ${this.aircraftStatus.displayClimb}<br>` +
-      `Last Msg : ${this.aircraftStatus.displayLastUpdatedTime}<br>` +
+      `ICAO     : ${AircraftStatus.linkIcao(this.aircraftStatus)}<br>` +
+      `Flight   : ${AircraftStatus.linkCallsign(this.aircraftStatus)}<br>` +
+      `Location : ${AircraftStatus.displayLocation(this.aircraftStatus)}<br>` +
+      `Altitude : ${AircraftStatus.displayAltitude(this.aircraftStatus)}<br>` +
+      `Heading  : ${AircraftStatus.displayHeading(this.aircraftStatus)}<br>` +
+      `Velocity : ${AircraftStatus.displayVelocity(this.aircraftStatus)}<br>` +
+      `Climb    : ${AircraftStatus.displayClimb(this.aircraftStatus)}<br>` +
+      `Last Msg : ${AircraftStatus.displayLastUpdatedTime(this.aircraftStatus)}<br>` +
       `</pre>`
 
     this.leafletPopup.setContent(content)

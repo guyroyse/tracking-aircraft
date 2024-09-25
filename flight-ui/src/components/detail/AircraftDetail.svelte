@@ -1,12 +1,14 @@
 <script lang="ts">
   import { aircraftStore } from '../../stores/aircraft-store'
+  import { AircraftStatus } from '../../common/aircraft-status'
+  import type { AircraftStatusData } from '../../common/aircraft-status'
 
   export let params: { icaoId: string }
 
   const icaoId = params.icaoId
-  let aircraft = $aircraftStore.get(icaoId)
+  let aircraft: AircraftStatusData | null = $aircraftStore[icaoId] ?? null
   aircraftStore.subscribe(() => {
-    aircraft = $aircraftStore.get(icaoId)
+    aircraft = $aircraftStore[icaoId] ?? null
   })
 </script>
 
@@ -23,35 +25,35 @@
         </tr>
         <tr class="border-b-2 border-dotted border-redis-dusk">
           <th class="text-left py-2">Flight</th>
-          <td class="text-right">{@html aircraft.linkCallsign}</td>
+          <td class="text-right">{@html AircraftStatus.linkCallsign(aircraft)}</td>
         </tr>
         <tr class="border-b-2 border-dotted border-redis-dusk">
           <th class="text-left py-2">Latitude</th>
-          <td class="text-right">{aircraft.displayLatitude}</td>
+          <td class="text-right">{AircraftStatus.displayLatitude(aircraft)}</td>
         </tr>
         <tr class="border-b-2 border-dotted border-redis-dusk">
           <th class="text-left py-2">Longitude</th>
-          <td class="text-right">{aircraft.displayLongitude}</td>
+          <td class="text-right">{AircraftStatus.displayLongitude(aircraft)}</td>
         </tr>
         <tr class="border-b-2 border-dotted border-redis-dusk">
           <th class="text-left py-2">Altitude</th>
-          <td class="text-right">{aircraft.displayAltitude}</td>
+          <td class="text-right">{AircraftStatus.displayAltitude(aircraft)}</td>
         </tr>
         <tr class="border-b-2 border-dotted border-redis-dusk">
           <th class="text-left py-2">Heading</th>
-          <td class="text-right">{aircraft.displayHeading}</td>
+          <td class="text-right">{AircraftStatus.displayHeading(aircraft)}</td>
         </tr>
         <tr class="border-b-2 border-dotted border-redis-dusk">
           <th class="text-left py-2">Velocity</th>
-          <td class="text-right">{aircraft.displayVelocity}</td>
+          <td class="text-right">{AircraftStatus.displayVelocity(aircraft)}</td>
         </tr>
         <tr class="border-b-2 border-dotted border-redis-dusk">
           <th class="text-left py-2">Climb</th>
-          <td class="text-right">{aircraft.displayClimb}</td>
+          <td class="text-right">{AircraftStatus.displayClimb(aircraft)}</td>
         </tr>
         <tr>
           <th class="text-left py-2">Last Updated</th>
-          <td class="text-right">{aircraft.displayLastUpdatedTime}</td>
+          <td class="text-right">{AircraftStatus.displayLastUpdatedTime(aircraft)}</td>
         </tr>
       </tbody>
     </table>

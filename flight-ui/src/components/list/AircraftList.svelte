@@ -1,12 +1,14 @@
 <script lang="ts">
   import { AircraftStatus } from '../../common/aircraft-status'
+  import type { AircraftStatusData } from '../../common/aircraft-status'
   import { aircraftStore } from '../../stores/aircraft-store'
+  import type { AircraftStatuses } from '../../stores/aircraft-store'
 
-  let sortColumn: keyof AircraftStatus = 'icaoId'
+  let sortColumn: keyof AircraftStatusData = 'icaoId'
   let sortDirection: 'asc' | 'desc' = 'asc'
 
-  function sortData(data: Map<string, AircraftStatus>) {
-    return Array.from(data.values()).sort((a, b) => {
+  function sortData(data: AircraftStatuses): AircraftStatusData[] {
+    return Object.values(data).sort((a, b) => {
       if (sortColumn === 'icaoId' || sortColumn === 'callsign') {
         const aString = a[sortColumn] as string | null
         const bString = b[sortColumn] as string | null
@@ -37,7 +39,7 @@
     })
   }
 
-  function sortTable(column: keyof AircraftStatus) {
+  function sortTable(column: keyof AircraftStatusData) {
     if (sortColumn === column) {
       sortDirection = sortDirection === 'asc' ? 'desc' : 'asc'
     } else {
@@ -45,10 +47,14 @@
       sortDirection = 'asc'
     }
   }
+
+  function isEmpty(data: AircraftStatuses) {
+    return Object.keys(data).length === 0
+  }
 </script>
 
 <div class="w-full text-3xl px-48 py-12">
-  {#if $aircraftStore.size === 0}
+  {#if isEmpty($aircraftStore)}
     <p class="">No aircraft in the area.</p>
   {:else}
     <table class="table-auto w-full text-right font-mono">
@@ -68,15 +74,15 @@
       <tbody>
         {#each sortData($aircraftStore) as aircraft}
           <tr class="even:bg-redis-light-gray">
-            <td class="text-left py-2">{@html aircraft.linkIcao}</td>
-            <td class="text-left">{@html aircraft.linkCallsign}</td>
-            <td>{aircraft.displayLatitude}</td>
-            <td>{aircraft.displayLongitude}</td>
-            <td>{aircraft.displayAltitude}</td>
-            <td>{aircraft.displayHeading}</td>
-            <td>{aircraft.displayVelocity}</td>
-            <td>{aircraft.displayClimb}</td>
-            <td>{aircraft.displayLastUpdatedTime}</td>
+            <td class="text-left py-2">{@html AircraftStatus.linkIcao(aircraft)}</td>
+            <td class="text-left">{@html AircraftStatus.linkCallsign(aircraft)}</td>
+            <td>{AircraftStatus.displayLatitude(aircraft)}</td>
+            <td>{AircraftStatus.displayLongitude(aircraft)}</td>
+            <td>{AircraftStatus.displayAltitude(aircraft)}</td>
+            <td>{AircraftStatus.displayHeading(aircraft)}</td>
+            <td>{AircraftStatus.displayVelocity(aircraft)}</td>
+            <td>{AircraftStatus.displayClimb(aircraft)}</td>
+            <td>{AircraftStatus.displayLastUpdatedTime(aircraft)}</td>
           </tr>
         {/each}
       </tbody>

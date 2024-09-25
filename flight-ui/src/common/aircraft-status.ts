@@ -1,110 +1,114 @@
 import { AIRCRAFT_IDLE_TIME } from '../config'
 
-export class AircraftStatus {
+export type AircraftStatusData = {
   icaoId: string
   lastUpdated: number
-  callsign: string | null = null
-  radio: string | null = null
-  latitude: number | null = null
-  longitude: number | null = null
-  altitude: number | null = null
-  heading: number | null = null
-  velocity: number | null = null
-  climb: number | null = null
+  callsign: string | null
+  radio: string | null
+  latitude: number | null
+  longitude: number | null
+  altitude: number | null
+  heading: number | null
+  velocity: number | null
+  climb: number | null
+}
 
-  private constructor(icaoId: string) {
-    this.icaoId = icaoId
-    this.lastUpdated = new Date().getTime()
-  }
-
-  static fromJSON(json: string): AircraftStatus {
+export const AircraftStatus = {
+  fromJSON: function (json: string): AircraftStatusData {
     const { icaoId, callsign, radio, latitude, longitude, altitude, heading, velocity, climb } = JSON.parse(json)
-    const aircraftStatus = new AircraftStatus(icaoId)
-    aircraftStatus.callsign = callsign ?? null
-    aircraftStatus.radio = radio ?? null
-    aircraftStatus.latitude = latitude ?? null
-    aircraftStatus.longitude = longitude ?? null
-    aircraftStatus.altitude = altitude ?? null
-    aircraftStatus.heading = heading ?? null
-    aircraftStatus.velocity = velocity ?? null
-    aircraftStatus.climb = climb ?? null
 
-    return aircraftStatus
-  }
+    const status: AircraftStatusData = {
+      icaoId,
+      lastUpdated: new Date().getTime(),
+      callsign: callsign ?? null,
+      radio: radio ?? null,
+      latitude: latitude ?? null,
+      longitude: longitude ?? null,
+      altitude: altitude ?? null,
+      heading: heading ?? null,
+      velocity: velocity ?? null,
+      climb: climb ?? null
+    }
 
-  merge(that: AircraftStatus) {
-    this.lastUpdated = that.lastUpdated
-    this.callsign = that.callsign ?? this.callsign
-    this.radio = that.radio ?? this.radio
-    this.latitude = that.latitude ?? this.latitude
-    this.longitude = that.longitude ?? this.longitude
-    this.altitude = that.altitude ?? this.altitude
-    this.heading = that.heading ?? this.heading
-    this.velocity = that.velocity ?? this.velocity
-    this.climb = that.climb ?? this.climb
-  }
+    return status
+  },
 
-  get displayCallsign(): string {
-    return this.callsign ?? 'unknown'
-  }
+  merge: function (found: AircraftStatusData, received: AircraftStatusData): AircraftStatusData {
+    return {
+      icaoId: received.icaoId,
+      lastUpdated: received.lastUpdated,
+      callsign: received.callsign ?? found.callsign,
+      radio: received.radio ?? found.radio,
+      latitude: received.latitude ?? found.latitude,
+      longitude: received.longitude ?? found.longitude,
+      altitude: received.altitude ?? found.altitude,
+      heading: received.heading ?? found.heading,
+      velocity: received.velocity ?? found.velocity,
+      climb: received.climb ?? found.climb
+    }
+  },
 
-  get displayLocation(): string {
-    return this.latitude === null || this.longitude === null
+  displayCallsign: function (status: AircraftStatusData): string {
+    return status.callsign ?? 'unknown'
+  },
+
+  displayLocation: function (status: AircraftStatusData): string {
+    return status.latitude === null || status.longitude === null
       ? 'unknown'
-      : `${this.displayLatitude},${this.displayLongitude}`
-  }
+      : `${this.displayLatitude(status)},${this.displayLongitude(status)}`
+  },
 
-  get displayLatitude(): string {
-    return this.latitude === null ? 'unknown' : `${this.latitude.toFixed(4)}`
-  }
+  displayLatitude: function (status: AircraftStatusData): string {
+    return status.latitude === null ? 'unknown' : `${status.latitude.toFixed(4)}`
+  },
 
-  get displayLongitude(): string {
-    return this.longitude === null ? 'unknown' : `${this.longitude.toFixed(4)}`
-  }
+  displayLongitude: function (status: AircraftStatusData): string {
+    return status.longitude === null ? 'unknown' : `${status.longitude.toFixed(4)}`
+  },
 
-  get displayAltitude(): string {
-    return this.altitude === null ? 'unknown' : `${this.altitude.toLocaleString()} ft`
-  }
+  displayAltitude: function (status: AircraftStatusData): string {
+    return status.altitude === null ? 'unknown' : `${status.altitude.toLocaleString()} ft`
+  },
 
-  get displayHeading(): string {
-    return this.heading === null ? 'unknown' : `${this.heading} deg`
-  }
+  displayHeading: function (status: AircraftStatusData): string {
+    return status.heading === null ? 'unknown' : `${status.heading} deg`
+  },
 
-  get displayVelocity(): string {
-    return this.velocity === null ? 'unknown' : `${this.velocity} kn`
-  }
+  displayVelocity: function (status: AircraftStatusData): string {
+    return status.velocity === null ? 'unknown' : `${status.velocity} kn`
+  },
 
-  get displayClimb(): string {
-    return this.climb === null ? 'unknown' : `${this.climb} ft`
-  }
+  displayClimb: function (status: AircraftStatusData): string {
+    return status.climb === null ? 'unknown' : `${status.climb} ft`
+  },
 
-  get displayLastUpdatedTime(): string {
-    const lastUpdated = new Date(this.lastUpdated)
+  displayLastUpdatedTime: function (status: AircraftStatusData): string {
+    const lastUpdated = new Date(status.lastUpdated)
     return lastUpdated.toLocaleTimeString()
-  }
+  },
 
-  get linkIcao(): string {
-    const url = `#/aircraft/${this.icaoId}`
-    return `<a class="hover:underline hover:text-redis-deep-hyper text-redis-dusk-90" href="${url}">${this.icaoId}</a>`
-  }
+  linkIcao: function (status: AircraftStatusData): string {
+    const url = `#/aircraft/${status.icaoId}`
+    return `<a class="hover:underline hover:text-redis-deep-hyper text-redis-dusk-90" href="${url}">${status.icaoId}</a>`
+  },
 
-  get linkCallsign(): string {
-    if (!this.callsign) return 'unknown'
-    const url = `https://flightaware.com/live/flight/${this.callsign}`
-    const link = `<a class="hover:underline hover:text-redis-deep-hyper text-redis-dusk-90" href="${url}" target="_new">${this.callsign}</a>`
+  linkCallsign: function (status: AircraftStatusData): string {
+    if (!status.callsign) return 'unknown'
+    const url = `https://flightaware.com/live/flight/${status.callsign}`
+    const link = `<a class="hover:underline hover:text-redis-deep-hyper text-redis-dusk-90" href="${url}" target="_new">${status.callsign}</a>`
     return link
-  }
+  },
 
-  get latlng(): [number, number] | null {
-    return this.latitude === null || this.longitude === null ? null : [this.latitude, this.longitude]
-  }
+  latlng: function (status: AircraftStatusData): [number, number] | null {
+    return status.latitude === null || status.longitude === null ? null : [status.latitude, status.longitude]
+  },
 
-  get location(): string | null {
-    return this.latlng?.join(',') ?? null
-  }
+  location: function (status: AircraftStatusData): string | null {
+    return this.latlng(status)?.join(',') ?? null
+  },
 
-  get isExpired(): boolean {
+  isExpired: function (status: AircraftStatusData): boolean {
     const now = new Date().getTime()
-    return now - this.lastUpdated > AIRCRAFT_IDLE_TIME
+    return now - status.lastUpdated > AIRCRAFT_IDLE_TIME
   }
 }

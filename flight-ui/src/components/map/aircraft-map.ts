@@ -2,6 +2,7 @@ import L from 'leaflet'
 
 import { AircraftMarker } from './aircraft-marker'
 import { AircraftStatus } from '../../common/aircraft-status'
+import type { AircraftStatusData } from '../../common/aircraft-status'
 
 const homeIcon = L.icon({ iconUrl: 'icons/home.png', iconSize: [16, 16] })
 
@@ -49,11 +50,11 @@ export class AircraftMap {
     marker.addTo(this.map)
   }
 
-  fetchPlanes(): AircraftStatus[] {
+  fetchPlanes(): AircraftStatusData[] {
     return Array.from(this.markers.values()).map(marker => marker.aircraftStatus)
   }
 
-  addUpdatePlane(aircraftStatus: AircraftStatus): void {
+  addUpdatePlane(aircraftStatus: AircraftStatusData): void {
     const foundMarker = this.markers.get(aircraftStatus.icaoId)
     if (foundMarker) {
       const hadLocation = foundMarker.hasLocation
@@ -65,6 +66,7 @@ export class AircraftMap {
       }
     } else {
       const marker = AircraftMarker.create(aircraftStatus)
+      console.log(new Date().toTimeString(), `Adding new aircraft to map ${aircraftStatus.icaoId}`)
       if (marker.hasLocation) marker.leafletMarker.addTo(this.map)
       this.markers.set(aircraftStatus.icaoId, marker)
     }
