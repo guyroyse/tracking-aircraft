@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@guyroyse/optional": "^1.0.0",
     "@types/geojson": "^7946.0.14",
     "@types/leaflet": "^1.9.12",
     "leaflet": "^1.9.4",
