@@ -4,10 +4,12 @@
   import { aircraftStore } from '../../stores/aircraft-store'
   import type { AircraftStatuses } from '../../stores/aircraft-store'
 
-  let sortColumn: keyof AircraftStatusData = 'icaoId'
-  let sortDirection: 'asc' | 'desc' = 'asc'
+  import { sortDataStore } from '../../stores/sort-store'
 
   function sortData(data: AircraftStatuses): AircraftStatusData[] {
+    const sortColumn = $sortDataStore.column
+    const sortDirection = $sortDataStore.direction
+
     return Object.values(data).sort((a, b) => {
       if (sortColumn === 'icaoId' || sortColumn === 'callsign') {
         const aString = a[sortColumn] as string | null
@@ -40,11 +42,12 @@
   }
 
   function sortTable(column: keyof AircraftStatusData) {
-    if (sortColumn === column) {
-      sortDirection = sortDirection === 'asc' ? 'desc' : 'asc'
+    $sortDataStore.column
+    if ($sortDataStore.column === column) {
+      $sortDataStore.direction = $sortDataStore.direction === 'asc' ? 'desc' : 'asc'
     } else {
-      sortColumn = column
-      sortDirection = 'asc'
+      $sortDataStore.column = column
+      $sortDataStore.direction = 'asc'
     }
   }
 
