@@ -3,6 +3,7 @@ import L from 'leaflet'
 import { AircraftMarker } from './aircraft-marker'
 import { AircraftStatus } from '../../common/aircraft-status'
 import type { AircraftStatusData } from '../../common/aircraft-status'
+import type { CurrentPosition } from '../../stores/location-store'
 
 const homeIcon = L.icon({ iconUrl: 'icons/home.png', iconSize: [16, 16] })
 
@@ -14,17 +15,21 @@ for (let i = 0; i < 24; i++) {
 
 export class AircraftMap {
   private map: L.Map
+  private homeMarker: L.Marker
   private markers: Map<string, AircraftMarker>
 
-  private constructor(map: L.Map) {
+  private constructor(map: L.Map, homeMarker: L.Marker) {
     this.map = map
+    this.homeMarker = homeMarker
     this.markers = new Map()
   }
 
   static create(element: HTMLElement): AircraftMap {
     const leafletMap = L.map(element)
-    const aircraftMap = new AircraftMap(leafletMap)
+    const homeMarker = L.marker([0, 0], { icon: homeIcon })
+    const aircraftMap = new AircraftMap(leafletMap, homeMarker)
     aircraftMap.addTileLayer()
+    homeMarker.addTo(leafletMap)
     return aircraftMap
   }
 
@@ -46,8 +51,15 @@ export class AircraftMap {
   }
 
   addHome(latitude: number, longitude: number): void {
-    const marker = L.marker([latitude, longitude], { icon: homeIcon })
-    marker.addTo(this.map)
+    this.homeMarker.setLatLng([latitude, longitude])
+  }
+
+  onPositionChanged(callback: (position: CurrentPosition) => void): void {
+    this.map.on('moveend', () => {
+      const { lat, lng } = this.map.getCenter()
+      const zoom = this.map.getZoom()
+      callback({ latitude: lat, longitude: lng, zoom })
+    })
   }
 
   fetchPlanes(): AircraftStatusData[] {

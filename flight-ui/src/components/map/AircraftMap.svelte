@@ -1,7 +1,8 @@
 <script lang="ts">
   import Optional from '@guyroyse/optional'
 
-  import { homePositionStore } from '../../stores/location-store'
+  import { currentPositionStore, homePositionStore, updateCurrentPosition } from '../../stores/location-store'
+
   import { aircraftStore } from '../../stores/aircraft-store'
   import type { AircraftStatuses } from '../../stores/aircraft-store'
 
@@ -17,13 +18,24 @@
     /* Create the map and bind it to the element. */
     aircraftMap = AircraftMap.create(element)
 
+    /* Return to the previous position when we create the map. */
+    console.log('Restoring previous position', $currentPositionStore)
+    const { latitude, longitude, zoom } = $currentPositionStore
+    aircraftMap.centerView(latitude, longitude, zoom)
+
+    /* Log position changes in the current position store. */
+    aircraftMap.onPositionChanged(position => {
+      const { latitude, longitude, zoom } = position
+      updateCurrentPosition(latitude, longitude, zoom)
+    })
+
     /* Subscribe to the home position store and add a home icon. */
     const homePositionUnsubscribe = homePositionStore.subscribe(position => {
       console.log('Home position report', position)
-      const { latitude, longitude, loading } = position
-      if (!loading) {
-        aircraftMap.addHome(latitude, longitude)
-        aircraftMap.centerView(position.latitude, position.longitude)
+      const { latitude, longitude } = position
+      aircraftMap.addHome(latitude, longitude)
+      if ($currentPositionStore.latitude === 0 && $currentPositionStore.longitude === 0) {
+        aircraftMap.centerView(latitude, longitude, 8)
       }
     })
 
@@ -50,6 +62,8 @@
         }
       }
 
+      /* Loop over previous aircraft and remove any that aren't longer present
+         in the current set. */
       for (let icaoId in previousAircraftStatuses) {
         currentStatus = Optional.ofNullable(aircraftStatuses[icaoId])
         if (!currentStatus.isPresent()) {
@@ -57,22 +71,9 @@
         }
       }
 
-      // clone the current aircraft statuses so we can compare them next time
+      /* Clone the current aircraft statuses so we can compare them next time.
+         Otherwise, it's just the same object and it gets updated in place. */
       previousAircraftStatuses = { ...aircraftStatuses }
-
-      // /* Remove planes that are no longer in the store. Could we do this with
-      //    the same loop the removed them from the store? Can that loop access
-      //    the map? */
-      // for (const plane of aircraftMap.fetchPlanes()) {
-      //   const status = aircraftStatuses[plane.icaoId]
-      //   if (!status) aircraftMap.removePlane(plane.icaoId)
-      // }
-
-      // /* Add or update planes that *are* in the store. */
-      // for (const icaoId in aircraftStatuses) {
-      //   const status = aircraftStatuses[icaoId] as AircraftStatusData
-      //   aircraftMap.addUpdatePlane(status)
-      // }
     })
 
     return {
