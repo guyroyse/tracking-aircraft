@@ -48,6 +48,17 @@ export const AircraftStatus = {
     }
   },
 
+  hasChanged: function (a: AircraftStatusData, b: AircraftStatusData): boolean {
+    if (a.callsign !== b.callsign) return true
+    if (a.latitude !== b.latitude) return true
+    if (a.longitude !== b.longitude) return true
+    if (a.altitude !== b.altitude) return true
+    if (a.heading !== b.heading) return true
+    if (a.velocity !== b.velocity) return true
+    if (a.climb !== b.climb) return true
+    return false
+  },
+
   displayCallsign: function (status: AircraftStatusData): string {
     return status.callsign ?? 'unknown'
   },

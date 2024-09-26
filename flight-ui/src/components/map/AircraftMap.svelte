@@ -7,7 +7,7 @@
   import type { AircraftStatuses } from '../../stores/aircraft-store'
 
   import { AircraftMap } from './aircraft-map'
-  import type { AircraftStatusData } from '../../common/aircraft-status'
+  import { AircraftStatus, type AircraftStatusData } from '../../common/aircraft-status'
 
   let aircraftMap: AircraftMap
 
@@ -52,11 +52,8 @@
         currentStatus = Optional.ofNullable(aircraftStatuses[icaoId])
 
         if (previousStatus.isPresent()) {
-          const previousString = JSON.stringify(previousStatus.get())
-          const currentString = JSON.stringify(currentStatus.get())
-          if (previousString !== currentString) {
-            aircraftMap.addUpdatePlane(currentStatus.get())
-          }
+          const hasChanged = AircraftStatus.hasChanged(previousStatus.get(), currentStatus.get())
+          if (hasChanged) aircraftMap.addUpdatePlane(currentStatus.get())
         } else {
           aircraftMap.addUpdatePlane(currentStatus.get())
         }
