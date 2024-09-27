@@ -2,10 +2,10 @@
   import MenuItem from './MenuItem.svelte'
 </script>
 
-<nav class="flex-grow-0 bg-redis-midnight text-redis-dusk-50 text-xl tracking-wide p-3">
+<nav class="flex-1 text-redis-dusk-50">
   <ul class="flex flex-row">
     <MenuItem path="/" text="Map" />
     <MenuItem path="/list" text="List" />
-    <MenuItem path="/search" text="Search" />
+    <MenuItem path="/stats" text="Stats" />
   </ul>
 </nav>

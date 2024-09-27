@@ -5,6 +5,7 @@ import express, { Express, Router } from 'express'
 import { Server as HTTP_Server } from 'http'
 
 import { router as aircraftAPI_Router } from './aircraft-api-router'
+import { router as statsAPI_Router } from './stats-api-router'
 
 export class FlightWebServer {
   private app: Express
@@ -16,7 +17,11 @@ export class FlightWebServer {
 
   static create(): FlightWebServer {
     const app = express()
-    return new FlightWebServer(app).enableJSON().enableCORS().bindRoutes('/aircraft', aircraftAPI_Router)
+    return new FlightWebServer(app)
+      .enableJSON()
+      .enableCORS()
+      .bindRoutes('/aircraft', aircraftAPI_Router)
+      .bindRoutes('/stats', statsAPI_Router)
   }
 
   private enableJSON(): FlightWebServer {

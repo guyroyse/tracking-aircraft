@@ -45,15 +45,19 @@ export class AircraftEventConsumer {
   }
 
   async start() {
-    /* start with recent events */
+    for await (const event of this.fetchEvents()) {
+      const aircraftStatus = this.buildAircraftStatus(event)
+      this.handlers.forEach(handler => handler(aircraftStatus))
+    }
+  }
+
+  private async *fetchEvents() {
     let currentId = '$'
 
-    /* process events forever */
     while (true) {
       const event = await this.fetchNextEvent(currentId)
       if (event) {
-        const aircraftStatus = this.buildAircraftStatus(event)
-        this.handlers.forEach(handler => handler(aircraftStatus))
+        yield event
         currentId = this.extractId(event)
       }
     }
