@@ -33,7 +33,7 @@ Thanks for the picture, random Internt stranger!
 
 ## Installing the software
 
-Installing SDR software can be a bit fidly. You've been warned. That said, it has gotten easier over the years. You'll need three pieces of software to make this code work—besides, like, Node.js and Docker and stuff: Redis, the RTL SDR drivers, and Dump1090.
+Installing SDR software can be a bit fidly. You've been warned. That said, it has gotten easier over the years. You'll need three pieces of software to make this code work—besides, like, Node.js and stuff: Redis, the RTL SDR drivers, and dump1090.
 
 ### Installing Redis
 
@@ -143,7 +143,7 @@ If you installed to Linux, you'll need to run this instead:
 dump1090-mutability --net --interactive
 ```
 
-If you have your antenna hooked up, aircraft should start showing up. Here's some that I found today while writing this README:
+If you have your antenna attached, aircraft should start showing up. Here's some that I found today while writing this README:
 
 ```
  Hex    Mode  Sqwk  Flight   Alt    Spd  Hdg    Lat      Long   RSSI  Msgs  Ti/

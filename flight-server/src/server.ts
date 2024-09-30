@@ -27,7 +27,7 @@ resetCounter(MESSAGE_COUNT)
 /* Update Redis with the current aircraft data. */
 consumer.registerHandler(async aircraft => {
   const { icaoId, altitude, velocity, climb } = aircraft
-  const key = `${AIRCRAFT_STATUS_PREFIX}${icaoId}`
+  const key = `${AIRCRAFT_STATUS_PREFIX}:${icaoId}`
 
   // Merge the current aircraft data with the existing data.
   redis.json.merge(key, '$', aircraft)

@@ -1,0 +1,12 @@
+services:
+  flight-server:
+    build: .
+    ports:
+      - '8080:80'
+    environment:
+      - REDIS_HOST
+      - REDIS_PORT
+      - REDIS_PASSWORD
+      - AIRCRAFT_STREAM_KEY
+      - AIRCRAFT_STATUS_TTL
+      - FLIGHT_SERVER_PORT=80

@@ -1,33 +1,17 @@
 services:
-  api-gateway:
+  flight-server:
     build: api-gateway
     ports:
-      - "8080:80"
-    # depends_on:
-    #   - flight-ui
-  # flight-ui:
-  #   build: flight-ui
-  #   depends_on:
-  #     - flight-api
-  #     - flight-events
-  flight-api:
-    build: flight-api
+      - "8080:8080"
     environment:
       - REDIS_HOST
       - REDIS_PORT
       - REDIS_PASSWORD
-  flight-events:
-    build: flight-events
+  flight-ui:
+    build: flight-ui
+    ports:
+      - "8000:8000"
     environment:
       - REDIS_HOST
       - REDIS_PORT
       - REDIS_PASSWORD
-      - STREAM_KEY
-  radio-consumer:
-    build: radio-consumer
-    environment:
-      - REDIS_HOST
-      - REDIS_PORT
-      - REDIS_PASSWORD
-      - STREAM_KEY
-      - AIRCRAFT_DATA_LIFETIME
