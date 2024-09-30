@@ -2,11 +2,11 @@ services:
   radio-ingestor:
     build: .
     environment:
-      - SBS1_SOURCE_HOST=host.docker.internal
-      - SBS1_SOURCE_PORT=30003
+      - SBS1_HOST
+      - SBS1_PORT
       - REDIS_HOST
       - REDIS_PORT
       - REDIS_PASSWORD
-      - STREAM_KEY
-      - STREAM_LIFETIME
+      - AIRCRAFT_STREAM_KEY
+      - AIRCRAFT_STREAM_LIEFTIME
       - RADIO_ID
