@@ -174,9 +174,9 @@ The purpose of the _Radio Ingestor_ is to take transponder broadcasts and write 
 
 The _Flight Server_ consumes the event stream, enriches it, and saves current flight status to Redis. It also publishes the enriched data as a WebSocket and provides simple HTTP APIs to query aircraft status and stats.
 
-The _Flight UI_ presents flight data to the end user an in map, in tables, and with detailed views. It is designed to work alongside the _Flight Server_ and is useless without it.
+The _Flight UI_ presents flight data to the end user providing both map and detail views. It is designed to work alongside the _Flight Server_ and is useless without it.
 
-The run the demo, you need to spin up these three components (in addition to dump1090).
+The run the demo, you need to spin up dump1090 and these three components.
 
 ### Running dump1090
 
