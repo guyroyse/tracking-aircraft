@@ -157,7 +157,7 @@ Now that we have the fiddly bits working, we can get the demo running. The demo 
 ```mermaid
 graph LR
   subgraph "SDR & Antenna"
-    direction TB
+    direction TD
     A{Antenna} --> B((SDR))
   end
   B --> C["Radio Ingestor"]
