@@ -165,8 +165,8 @@ graph LR
   end
   ING --> RED[Redis]
   RED --> SRV("Flight Server")
+  SRV --> RED
   subgraph "Consumer"
-    SRV --> RED
     SRV --> WEB("Flight UI")
     WEB --> SRV
   end
