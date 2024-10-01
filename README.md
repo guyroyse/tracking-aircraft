@@ -156,12 +156,12 @@ Now that we have the fiddly bits working, we can get the demo running. The demo 
 
 ```mermaid
 flowchart LR
-  A["fa:wifi Antenna"] --> B[Software-defined Radio]
-  B --> C[Radio Ingestor]
+  A["Antenna"] --> B[SDR]
+  B --> C["Radio Ingestor"]
   C --> D[Redis]
-  D --> E[Flight Server]
+  D --> E["Flight Server"]
   E --> D
-  E --> F[Flight UI]
+  E --> F["Flight UI"]
   F --> E
 ```
 
