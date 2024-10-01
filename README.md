@@ -156,7 +156,7 @@ Now that we have the fiddly bits working, we can get the demo running. The demo 
 
 ```mermaid
 graph LR
-  subgraph Hardware
+  subgraph TD "SDR & Antenna"
     A{Antenna} --> B((SDR))
   end
   B --> C["Radio Ingestor"]
