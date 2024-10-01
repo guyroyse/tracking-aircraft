@@ -157,14 +157,13 @@ Now that we have the fiddly bits working, we can get the demo running. The demo 
 ```mermaid
 graph LR
   subgraph "SDR & Antenna"
-    direction TD;
     A{Antenna} --> B((SDR))
   end
-  B --> C["Radio Ingestor"]
+  B --> C("Radio Ingestor")
   C --> D[Redis]
-  D --> E["Flight Server"]
+  D --> E("Flight Server")
   E --> D
-  E --> F["Flight UI"]
+  E --> F("Flight UI")
   F --> E
 ```
 
