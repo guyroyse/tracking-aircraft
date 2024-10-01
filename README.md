@@ -156,11 +156,19 @@ Now that we have the fiddly bits working, we can get the demo running. The demo 
 
 ```mermaid
 graph LR
-  subgraph "External Tools"
+  subgraph "Atlanta"
     ANT{Antenna} --> SDR((SDR))
     SDR --> DMP[dump1090]
+    DMP --> ING("Radio Ingestor")
   end
-  subgraph "Producer"
+  subgraph "Columbus"
+    ANT{Antenna} --> SDR((SDR))
+    SDR --> DMP[dump1090]
+    DMP --> ING("Radio Ingestor")
+  end
+  subgraph "Denver"
+    ANT{Antenna} --> SDR((SDR))
+    SDR --> DMP[dump1090]
     DMP --> ING("Radio Ingestor")
   end
   ING --> RED[Redis]
