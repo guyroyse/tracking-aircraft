@@ -1,17 +1,36 @@
 services:
-  flight-server:
-    build: api-gateway
+  redis:
+    image: redis/redis-stack-server:latest
     ports:
-      - "8080:8080"
+      - "6379:6379"
+  radio-ingestor:
+    depends_on:
+      - redis
+    build: radio-ingestor
     environment:
-      - REDIS_HOST
-      - REDIS_PORT
-      - REDIS_PASSWORD
+      - SBS1_HOST=host.docker.internal
+      - SBS1_PORT=30003
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - AIRCRAFT_STREAM_KEY=radio:events
+      - AIRCRAFT_STREAM_LIEFTIME=3600
+      - RADIO_ID=radio:docker
+  flight-server:
+    depends_on:
+      - redis
+    build: flight-server
+    ports:
+      - "8080:80"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - AIRCRAFT_STATUS_TTL=3600
+      - FLIGHT_SERVER_PORT=80
   flight-ui:
+    depends_on:
+      - flight-server
     build: flight-ui
     ports:
-      - "8000:8000"
-    environment:
-      - REDIS_HOST
-      - REDIS_PORT
-      - REDIS_PASSWORD
+      - "8000:80"

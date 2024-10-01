@@ -3,7 +3,3 @@ services:
     build: .
     ports:
       - '8000:80'
-    environment:
-      - AIRCRAFT_IDLE_TIME
-      - FLIGHT_SERVER_HOST
-      - FLIGHT_SERVER_WS
