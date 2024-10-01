@@ -31,25 +31,9 @@ Regardless of which antenna option you go with, you'll want to mount it vertical
 
 Thanks for the picture, random Internt stranger!
 
-## Installing the software
+## Installing SDR software
 
-Installing SDR software can be a bit fidly. You've been warned. That said, it has gotten easier over the years. You'll need three pieces of software to make this code work—besides, like, Node.js and stuff: Redis, the RTL SDR drivers, and dump1090.
-
-### Installing Redis
-
-Redis is where we're storing our aircraft spots. Gotta put your data somewhere. You can either install Redis locally, use Docker, or use Redis Cloud.
-
-To **install Redis locally**, follow the instructions at https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/.
-
-To **use Docker**, run the following command:
-
-```bash
-docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
-```
-
-To **use Redis Cloud**, sign up for a free account at https://cloud.redis.io/.
-
-You might also want to snag Redis Insight. You can find that on the App Store, the Microsfot Store, or at https://redis.io/insight.
+Installing SDR software can be a bit fidly. You've been warned. That said, it has gotten easier over the years. You'll need two pieces of software to make this code work—besides, like, Node.js and stuff: the RTL SDR drivers, and dump1090.
 
 ### Installing the SDR drivers
 
@@ -168,7 +152,7 @@ If you have your antenna attached, aircraft should start showing up. Here's some
 
 ## Running the demo
 
-The demo itself is made of up three components: the _Radio Ingestor_, the _Flight Server_, and the _Flight UI_.
+Now that we have the fiddly bits working, we can get the demo running. The demo itself is made of up four components: the _Radio Ingestor_, the _Flight Server_, the _Flight UI_, and _Redis_.
 
 The purpose of the _Radio Ingestor_ is to take transponder broadcasts and write them to a Redis event stream. It is designed so that multiple instances can run at the same time feeding aircraft spots into Redis from multiple, geographically-dispersed locations.
 
@@ -176,11 +160,9 @@ The _Flight Server_ consumes the event stream, enriches it, and saves current fl
 
 The _Flight UI_ presents flight data to the end user providing both map and detail views. It is designed to work alongside the _Flight Server_ and is useless without it.
 
-The run the demo, you need to spin up dump1090 and these three components.
+### Quickstart
 
-### Running dump1090
-
-In a dedicated window, launch dump1090 with the following command:
+In a dedicated window, launch dump1090 with one of the following commands:
 
 ```bash
 dump1090 --net --interactive              # for Mac or Windows
@@ -189,13 +171,55 @@ dump1090-mutability --net --interactive   # for Linux
 
 The `--net` option tells dump1090 to publish transponder broadcasts on port 30003. The `--interactive` flag just makes it prettier.
 
-### Running a Radio Ingestor
-
-Before you run the _Radio Ingestor_, it must be configured. Look at the `sample.env` file in the `radio-ingestor` folder for instructions. If you're running Redis and dump1090 locally, the defaults should be fine.
-
-To run the _Radio Ingestor_, you need to install Node.js packages, build it, and run it:
+Now, from the root of this repo run:
 
 ```bash
+docker compose up --build
+```
+
+This will download Redis, build all the components, and start them up with defaults that will work. No fuss. No muss.
+
+Once it's started, point your browser at http://localhost:8000 and watch the aircraft move about.
+
+### Installing Redis and/or Redis Insight
+
+Redis is where we're storing our aircraft spots. If you're not going with the quickstart, you'll need to have Redis somewhere. You can either install it locally, use Docker, or use Redis Cloud.
+
+- To **install Redis locally**, follow the instructions at https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/.
+
+- To **use Docker**, run the following command:
+
+```bash
+docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
+```
+
+- To **use Redis Cloud**, sign up for a free account at https://cloud.redis.io/.
+
+You might also want to snag Redis Insight so you can see what Redis is doing. You can find that on the App Store, the Microsoft Store, or at https://redis.io/insight.
+
+### Running just the Radio Ingestor
+
+You'll need an existing Redis instance to do this. This might be local, but will probably be a Redis Cloud instance.
+
+Before you run the _Radio Ingestor_, it must be configured. Details are in the the `sample.env` file in the `radio-ingestor` folder. However, the tl;dr is:
+
+```bash
+cd radio-ingestor
+cp sample.env .env
+```
+
+Then edit the Redis options in the `.env` file to point to your Redis Cloud instance.
+
+To run the _Radio Ingestor_ you can just use Docker:
+
+```bash
+docker compose up --build
+```
+
+If you'd rather run it using Node.js directly, then make sure you have Node.js installed and run the following commands:
+
+```bash
+cd radio-ingestor
 npm install
 npm run build
 npm start
@@ -204,18 +228,13 @@ npm start
 If you'd like to run it in dev mode instead you can skip the build:
 
 ```bash
+cd radio-ingestor
 npm install
 npm run dev
 ```
 
-To run the _Radio Ingestor_ using Docker, be sure to adjust the values in your `.env` file as suggested in the `sample.env` file. When that is done, just run:
-
-```bash
-docker compose up --build
-```
-
 You should be able to see an event stream in Redis, using Redis Insight of course, populating with aircraft transponder events.
 
-### Running the Flight Server and the Flight UI
+### Running the Flight Server and Flight UI
 
 Pending
