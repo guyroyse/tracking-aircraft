@@ -159,8 +159,10 @@ flowchart LR
   A[Antenna] --> B[Software-defined Radio]
   B --> C[Radio Ingestor]
   C --> D[Redis]
-  D <-> E[Flight Server]
-  E <-> F[Flight UI]
+  D --> E[Flight Server]
+  E --> D
+  E --> F[Flight UI]
+  F --> E
 ```
 
 The purpose of the _Radio Ingestor_ is to take transponder broadcasts and write them to a Redis event stream. It is designed so that multiple instances can run at the same time feeding aircraft spots into Redis from multiple, geographically-dispersed locations.
