@@ -157,21 +157,23 @@ Now that we have the fiddly bits working, we can get the demo running. The demo 
 ```mermaid
 graph LR
   subgraph "Atlanta"
-    ANT{Antenna} --> SDR((SDR))
-    SDR --> DMP[dump1090]
-    DMP --> ING("Radio Ingestor")
+    ANT1{Antenna} --> SDR1((SDR))
+    SDR1 --> DMP1[dump1090]
+    DMP1 --> ING1("Radio Ingestor")
   end
   subgraph "Columbus"
-    ANT{Antenna} --> SDR((SDR))
-    SDR --> DMP[dump1090]
-    DMP --> ING("Radio Ingestor")
+    ANT2{Antenna} --> SDR2((SDR))
+    SDR2 --> DMP2[dump1090]
+    DMP2 --> ING2("Radio Ingestor")
   end
   subgraph "Denver"
-    ANT{Antenna} --> SDR((SDR))
-    SDR --> DMP[dump1090]
-    DMP --> ING("Radio Ingestor")
+    ANT3{Antenna} --> SDR3((SDR))
+    SDR3 --> DMP3[dump1090]
+    DMP3 --> ING3("Radio Ingestor")
   end
-  ING --> RED[Redis]
+  ING1 --> RED[Redis]
+  ING2 --> RED[Redis]
+  ING3 --> RED[Redis]
   RED --> SRV("Flight Server")
   SRV --> RED
   subgraph "Consumer"
