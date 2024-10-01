@@ -155,12 +155,12 @@ If you have your antenna attached, aircraft should start showing up. Here's some
 Now that we have the fiddly bits working, we can get the demo running. The demo itself is made of up four components: the _Radio Ingestor_, the _Flight Server_, the _Flight UI_, and _Redis_.
 
 ```mermaid
-graph LR;
-  Antenna-->Software-defined Radio
-  Software-defined Radio-->Radio Ingestor
-  Radio Ingestor-->Redis
-  Redis<->Flight Server
-  Flight Server<->Flight UI
+flowchart LR
+  A[Antenna] --> B[Software-defined Radio]
+  B --> C[Radio Ingestor]
+  C --> D[Redis]
+  D <-> E[Flight Server]
+  E <-> F[Flight UI]
 ```
 
 The purpose of the _Radio Ingestor_ is to take transponder broadcasts and write them to a Redis event stream. It is designed so that multiple instances can run at the same time feeding aircraft spots into Redis from multiple, geographically-dispersed locations.
