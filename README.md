@@ -156,16 +156,16 @@ Now that we have the fiddly bits working, we can get the demo running. The demo 
 
 ```mermaid
 graph LR
-  subgraph "SDR & Antenna"
+  subgraph
     ANT{Antenna} --> SDR((SDR))
-    SDR --> D[dump1090]
+    SDR --> DMP[dump1090]
   end
-  D --> RI("Radio Ingestor")
-  RI --> R[Redis]
-  R --> FS("Flight Server")
-  FS --> R
-  FS --> UI("Flight UI")
-  UI --> FS
+  DMP --> ING("Radio Ingestor")
+  ING --> RED[Redis]
+  RED --> SRV("Flight Server")
+  SRV --> RED
+  SRV --> WEB("Flight UI")
+  WEB --> SRV
 ```
 
 The purpose of the _Radio Ingestor_ is to take transponder broadcasts and write them to a Redis event stream. It is designed so that multiple instances can run at the same time feeding aircraft spots into Redis from multiple, geographically-dispersed locations.
