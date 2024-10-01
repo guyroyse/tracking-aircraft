@@ -1,10 +1,10 @@
 # Tracking aircraft with Redis + software-defined radio
 
-I'm wrote a rather elaborate demo that tracks aircraft using Redis and Node.js. It does this by receiving aircraft transponder broadcasts and shoving them into an event stream in Redis.
+I wrote a rather elaborate demo that tracks aircraft using Redis and Node.js. It does this by receiving aircraft transponder broadcasts and shoving them into an event stream in Redis.
 
 There is no Internet involved in receiving these broadcasts. Instead, a hardware device called a software-defined radio (SDR) receives these broadcasts from the air and converts them into useful data that we can use. Which is pretty dang cool!
 
-This repo contains the code and instructions you'll need to get it up and running for yourself.
+This repo contains the code and instructions you need to get it up and running for yourself.
 
 I also have a talk about this. If you want to check out the [slides](/slides), they're in here too.
 
@@ -12,24 +12,24 @@ I also have a talk about this. If you want to check out the [slides](/slides), t
 
 This demo uses a software-defined radio. Despite the use of the word _software_ in its name, software-defined radio is actually a hardware device. So, you'll need to buy an SDR and an antenna to use this demo. No worries, SDRs are cheap.
 
-Here's the load out I like to use. It includes the SDR dongle and an antenna specifically designed for picking up aircraft transponder broadcasts.
+Here's the load-out I like to use. It includes the SDR dongle and an antenna specifically designed for picking up aircraft transponder broadcasts.
 
 - **RTL SDR**: https://www.amazon.com/RTL-SDR-Blog-RTL2832U-Software-Defined/dp/B0CD745394/
 - **ADS-B Antenna**: https://www.amazon.com/1090MHz-Antenna-Fiberglass-SMA-Male-Extension/dp/B09BQ4H26L/
 
-If you want something cheaper and more general purpose, and this is probably a better choice, there are some bundles that include the same SDR and some more flexible antennas. This is a good choice if you want to do _other_ things with your SDR. Which will happen.
+If you want something cheaper and more general-purpose, and this is probably a better choice, some bundles include the same SDR and some more flexible antennas. This is a good way to go if you want to do _other_ things with your SDR. Which will happen.
 
 - **RTL SDR kit**: https://www.amazon.com/RTL-SDR-Blog-RTL2832U-Software-Defined/dp/B0CD7558GT/
 
-You can also make your own antenna if you are ambitious. I'll leave that up to your own googling.
+You can also make your _own_ antenna if you are ambitious. I'll leave that up to your own googling.
 
-If you chose to make your own antenna or use the kit above, you'll want both legs of the antenna extended/cut to a length of ~69mm. Arrange them so that that are in a line, 180 degrees apart. This, in radio terms, is called a dipole.
+If you choose to make an antenna or to use the kit above, you'll want both legs of the antenna extended/cut to a length of ~69mm. Arrange them so that they are in a line, 180 degrees apart. This, in radio terms, is called a dipole.
 
-Regardless of which antenna option you go with, you'll want to mount it vertically as this matches the way they are mounted on aircraft. Here's a picture of a homemade antena (not mine) mounted vertically in an attic (not mine):
+Regardless of which antenna option you go with, you'll want to mount it vertically as this matches the way they are mounted on aircraft. Here's a picture of a homemade antenna (not mine) mounted vertically in an attic (not mine):
 
 ![](homemade-adsb.jpg)
 
-Thanks for the picture, random Internt stranger!
+Thanks for the picture, random Internet stranger!
 
 ## Installing SDR software
 
@@ -54,7 +54,7 @@ brew install rtl-sdr
 
 #### Windows
 
-You can download the RTL SDR drivers and tools from https://ftp.osmocom.org/binaries/windows/rtl-sdr/. They are built weekly so get the latest one for your platform—probably the 64-bit one. The download is just a ZIP full of .EXE and .DLL files. Put these files in a folder somewhere on your system and add that folder to your PATH to get it working.
+You can download the RTL SDR drivers and tools from https://ftp.osmocom.org/binaries/windows/rtl-sdr/. They are built weekly so get the latest one for your platform—probably the 64-bit one. The download is simply a .ZIP file full of .EXE and .DLL files. Put these files in a folder somewhere on your system and add that folder to your PATH to get it working.
 
 Details on the drivers themselves can be found at https://osmocom.org/projects/rtl-sdr/wiki/Rtl-sdr.
 
@@ -70,7 +70,7 @@ You should get back something like:
 
 ```
 Found 1 device(s):
-  0:  Realtek, RTL2838UHIDIR, SN: 00000001
+ 0:  Realtek, RTL2838UHIDIR, SN: 00000001
 
 Using device 0: Generic RTL2832U OEM
 Detached kernel driver
@@ -91,7 +91,7 @@ Hooray! Your drivers are working. Press Ctrl-C to stop and go to the next step.
 
 ### Installing dump1090
 
-Dump1090 is a piece of software that uses the RTL SDR to listen to aircraft transponder broadcasts and present them to the user and make them available over a socket connection. The code in this repo uses that socket connection to read the broadcasts.
+Dump1090 is software that uses an RTL SDR to listen to aircraft transponder broadcasts, present them to the user, and make them available over a socket connection. The code in this repo uses that socket connection to read the broadcasts.
 
 #### Linux
 
@@ -99,7 +99,7 @@ Dump1090 is a piece of software that uses the RTL SDR to listen to aircraft tran
 sudo apt install dump1090-mutability
 ```
 
-You'll might be asked if you want to install this so that it always runs. I've only ever said no.
+You might be asked if you want to install this so that it always runs. I've only ever said no.
 
 #### Mac
 
@@ -111,11 +111,11 @@ brew install dump1090-mutability
 
 Windows has a lot of ports of dump1090. I like to use this one: https://github.com/MalcolmRobb/dump1090.
 
-Just download the .ZIP file in the root of the repository—yes, it is really 10-years-old—and unzip it into a folder of your choice. From there, you can just run it from that folder or, if your prefer, add it to your path.
+Just download the .ZIP file in the root of the repository—yes, it's really 10 years old—and unzip it into a folder of your choice. From there, you can just run it from that folder or, if you prefer, add it to your path.
 
 #### Testing the install
 
-You should be able to now run dump-1090 using the follow command:
+You should now be able to run dump1090 using the following command:
 
 ```bash
 dump1090 --net --interactive
@@ -152,31 +152,31 @@ If you have your antenna attached, aircraft should start showing up. Here's some
 
 ## Running the demo
 
-Now that we have the fiddly bits working, we can get the demo running. The demo itself is made of up four components: the _Radio Ingestor_, the _Flight Server_, the _Flight UI_, and _Redis_.
+Now that we have the fiddly bits working, we can get the demo running. The demo itself is made up of four components: the _Radio Ingestor_, the _Flight Server_, the _Flight UI_, and _Redis_.
 
 ```mermaid
 graph LR
-  subgraph "Atlanta"
-    ANT1{Antenna} --> SDR1((RTL SDR)) --> DMP1[dump1090] --> ING1("Radio Ingestor")
-  end
-  subgraph "Columbus"
-    ANT2{Antenna} --> SDR2((RTL SDR)) --> DMP2[dump1090] --> ING2("Radio Ingestor")
-  end
-  subgraph "Denver"
-    ANT3{Antenna} --> SDR3((RTL SDR)) --> DMP3[dump1090] --> ING3("Radio Ingestor")
-  end
-  ING1 --> RED[Redis]
-  ING2 --> RED
-  ING3 --> RED
-  RED <--> SRV("Flight Server")
-  subgraph "Consumer"
-    SRV <--> WEB("Flight UI")
-  end
+ subgraph "Atlanta"
+ ANT1{Antenna} --> SDR1((RTL SDR)) --> DMP1[dump1090] --> ING1("Radio Ingestor")
+ end
+ subgraph "Columbus"
+ ANT2{Antenna} --> SDR2((RTL SDR)) --> DMP2[dump1090] --> ING2("Radio Ingestor")
+ end
+ subgraph "Denver"
+ ANT3{Antenna} --> SDR3((RTL SDR)) --> DMP3[dump1090] --> ING3("Radio Ingestor")
+ end
+ ING1 --> RED[Redis]
+ ING2 --> RED
+ ING3 --> RED
+ RED <--> SRV("Flight Server")
+ subgraph "Consumer"
+ SRV <--> WEB("Flight UI")
+ end
 ```
 
-The purpose of the _Radio Ingestor_ is to take transponder broadcasts and write them to a Redis event stream. It is designed so that multiple instances can run at the same time feeding aircraft spots into Redis from multiple, geographically-dispersed locations.
+The purpose of the _Radio Ingestor_ is to take transponder broadcasts and write them to a Redis event stream. It is designed so that multiple instances can run at the same time feeding aircraft spots into Redis from multiple, geographically dispersed locations.
 
-The _Flight Server_ consumes the event stream, enriches it, and saves current flight status to Redis. It also publishes the enriched data as a WebSocket and provides simple HTTP APIs to query aircraft status and stats.
+The _Flight Server_ consumes the event stream, enriches it, and saves current flight statuses to Redis. It also publishes the enriched data as a WebSocket and provides simple HTTP APIs to query aircraft status and stats.
 
 The _Flight UI_ presents flight data to the end user providing both map and detail views. It is designed to work alongside the _Flight Server_ and is useless without it.
 
@@ -189,7 +189,7 @@ dump1090 --net --interactive              # for Mac or Windows
 dump1090-mutability --net --interactive   # for Linux
 ```
 
-The `--net` option tells dump1090 to publish transponder broadcasts on port 30003. The `--interactive` flag just makes it prettier.
+The `--net` option tells dump1090 to publish transponder broadcasts on port 30003. The `--interactive` option just makes it prettier.
 
 Now, from the root of this repo run:
 
@@ -201,9 +201,9 @@ This will download Redis, build all the components, and start them up with defau
 
 Once it's started, point your browser at http://localhost:8000 and watch the aircraft move about.
 
-### Installing Redis and/or Redis Insight
+### Installing Redis and Redis Insight
 
-Redis is where we're storing our aircraft spots. If you're not going with the quickstart, you'll need to have Redis somewhere. You can either install it locally, use Docker, or use Redis Cloud.
+Redis is where we're storing our aircraft spots. If you're not going with the quickstart, you'll need Redis somewhere. You can either install it locally, use Docker, or use Redis Cloud.
 
 - To **install Redis locally**, follow the instructions at https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/.
 
@@ -254,15 +254,15 @@ npm install
 npm run dev
 ```
 
-You should be able to see an event stream in Redis, using Redis Insight of course, populating with aircraft transponder events.
+You should be able to see an event stream in Redis—using Redis Insight, of course—populating with aircraft transponder events.
 
 ### Running the Flight Server and Flight UI
 
-You'll need an existing Redis instance to do this. This could be a local instance of Redis, but will probably be a shared instance like [Redis Cloud](https://cloud.redis.io/). This instance should be fed by by one or more instances of a _Radio Ingestor_. Technically, this'll work even if the instance isn't being fed, but it won't be very interesting. Nothing in. Nothing out.
+You'll need an existing Redis instance to do this. This could be a local instance of Redis, but will probably be a shared instance like [Redis Cloud](https://cloud.redis.io/). This instance should be fed by one or more instances of a _Radio Ingestor_. Technically, this'll work even if the instance isn't being fed, but it won't be very interesting. Nothing in. Nothing out.
 
 #### Running the Flight Server
 
-Before you run the _Flight Server_, it must be configured. Details are in the the `sample.env` file in the `flight-server` folder. However, the tl;dr is:
+Before you run the _Flight Server_, it must be configured. Details are in the `sample.env` file in the `flight-server` folder. However, the tl;dr is:
 
 ```bash
 cd flight-server
@@ -295,15 +295,15 @@ npm install
 npm run dev
 ```
 
-If these instructions seem familiar, it's because I copied them directly from the _Radio Ingestor_ instructions. It's the same process.
+If these instructions seem familiar, that's because I copied them directly from the _Radio Ingestor_ instructions. It's the same process.
 
-Regardless, if you look in Redis Insight, you should see a lot more keys populating including JSON documents for each of the aircraft spotted; T-Digests gathering stats about altitude, velocity, and climb; a HyperLogLog counting unique aircraft; and a humble little string counting the number of messages received.
+Regardless, if you look in Redis Insight, you should see a lot more keys including JSON documents for each of the aircraft spotted; T-Digests gathering stats about altitude, velocity, and climb; a HyperLogLog counting unique aircraft; and a humble little string counting the number of messages received.
 
 #### Running the Flight UI
 
 The _Flight UI_ does _not_ need to be configured. It's all ready to go. However, it is hard-coded to look for the _Flight Server_ on `localhost:8080` and to expose itself on port `8000` when run in developer or preview mode. Once you compile it, you can server up the files on any port you'd like.
 
-At some point I'd like to make the _Flight Server_ host and port configurable. But this is what we have for now.
+At some point, I'd like to make the _Flight Server_ host and port configurable. But this is what we have for now.
 
 To run the _Flight Server_ you can just use Docker. Docker will compile the site and then host it internally on an NGINX instance:
 
