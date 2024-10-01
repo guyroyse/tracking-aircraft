@@ -33,7 +33,7 @@ Thanks for the picture, random Internt stranger!
 
 ## Installing SDR software
 
-Installing SDR software can be a bit fidly. You've been warned. That said, it has gotten easier over the years. You'll need two pieces of software to make this code work—besides, like, Node.js and stuff: the RTL SDR drivers, and dump1090.
+Installing SDR software can be a bit fiddly. You've been warned. That said, it has gotten easier over the years. You'll need two pieces of software to make this code work—besides, like, Node.js and stuff: the RTL SDR drivers, and dump1090.
 
 ### Installing the SDR drivers
 
@@ -153,6 +153,15 @@ If you have your antenna attached, aircraft should start showing up. Here's some
 ## Running the demo
 
 Now that we have the fiddly bits working, we can get the demo running. The demo itself is made of up four components: the _Radio Ingestor_, the _Flight Server_, the _Flight UI_, and _Redis_.
+
+```mermaid
+graph LR;
+  Antenna-->Software-defined Radio
+  Software-defined Radio-->Radio Ingestor
+  Radio Ingestor-->Redis
+  Redis<->Flight Server
+  Flight Server<->Flight UI
+```
 
 The purpose of the _Radio Ingestor_ is to take transponder broadcasts and write them to a Redis event stream. It is designed so that multiple instances can run at the same time feeding aircraft spots into Redis from multiple, geographically-dispersed locations.
 
