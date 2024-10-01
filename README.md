@@ -155,8 +155,10 @@ If you have your antenna attached, aircraft should start showing up. Here's some
 Now that we have the fiddly bits working, we can get the demo running. The demo itself is made of up four components: the _Radio Ingestor_, the _Flight Server_, the _Flight UI_, and _Redis_.
 
 ```mermaid
-flowchart LR
-  A{Antenna} --> B((SDR))
+graph LR
+  subgraph Z
+    A{Antenna} --> B((SDR))
+  end
   B --> C["Radio Ingestor"]
   C --> D[Redis]
   D --> E["Flight Server"]
