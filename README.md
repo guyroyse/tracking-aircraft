@@ -215,11 +215,11 @@ docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:la
 
 - To **use Redis Cloud**, sign up for a free account at https://cloud.redis.io/.
 
-You might also want to snag Redis Insight so you can see what Redis is doing. You can find that on the App Store, the Microsoft Store, or at https://redis.io/insight.
+You might also want to snag Redis Insight so you can see what Redis is doing. You can find that on the [App Store](https://apps.apple.com/us/app/redis-insight/id6446987963), the [Microsoft Store](https://apps.microsoft.com/detail/xp8k1ghcb0f1r2), or [directly from Redis](https://redis.io/insight).
 
 ### Running just the Radio Ingestor
 
-You'll need an existing Redis instance to do this. This might be local, but will probably be a Redis Cloud instance.
+You'll need an existing Redis instance to do this. This might be local, but will probably be a [Redis Cloud](https://cloud.redis.io/) instance.
 
 Before you run the _Radio Ingestor_, it must be configured. Details are in the the `sample.env` file in the `radio-ingestor` folder. However, the tl;dr is:
 
@@ -228,11 +228,12 @@ cd radio-ingestor
 cp sample.env .env
 ```
 
-Then edit the Redis options in the `.env` file to point to your Redis Cloud instance.
+Then edit the Redis options in the `.env` file to point to your Redis instance.
 
 To run the _Radio Ingestor_ you can just use Docker:
 
 ```bash
+cd radio-ingestor
 docker compose up --build
 ```
 
@@ -257,4 +258,81 @@ You should be able to see an event stream in Redis, using Redis Insight of cours
 
 ### Running the Flight Server and Flight UI
 
-Pending
+You'll need an existing Redis instance to do this. This could be a local instance of Redis, but will probably be a shared instance like [Redis Cloud](https://cloud.redis.io/). This instance should be fed by by one or more instances of a _Radio Ingestor_. Technically, this'll work even if the instance isn't being fed, but it won't be very interesting. Nothing in. Nothing out.
+
+#### Running the Flight Server
+
+Before you run the _Flight Server_, it must be configured. Details are in the the `sample.env` file in the `flight-server` folder. However, the tl;dr is:
+
+```bash
+cd flight-server
+cp sample.env .env
+```
+
+Then edit the Redis options in the `.env` file to point to your Redis instance.
+
+To run the _Flight Server_ you can just use Docker:
+
+```bash
+cd flight-server
+docker compose up --build
+```
+
+If you'd rather run it using Node.js directly, then make sure you have Node.js installed and run the following commands:
+
+```bash
+cd flight-server
+npm install
+npm run build
+npm start
+```
+
+If you'd like to run it in dev mode instead you can skip the build:
+
+```bash
+cd flight-server
+npm install
+npm run dev
+```
+
+If these instructions seem familiar, it's because I copied them directly from the _Radio Ingestor_ instructions. It's the same process.
+
+Regardless, if you look in Redis Insight, you should see a lot more keys populating including JSON documents for each of the aircraft spotted; T-Digests gathering stats about altitude, velocity, and climb; a HyperLogLog counting unique aircraft; and a humble little string counting the number of messages received.
+
+#### Running the Flight UI
+
+The _Flight UI_ does _not_ need to be configured. It's all ready to go. However, it is hard-coded to look for the _Flight Server_ on `localhost:8080` and to expose itself on port `8000` when run in developer or preview mode. Once you compile it, you can server up the files on any port you'd like.
+
+At some point I'd like to make the _Flight Server_ host and port configurable. But this is what we have for now.
+
+To run the _Flight Server_ you can just use Docker. Docker will compile the site and then host it internally on an NGINX instance:
+
+```bash
+cd flight-ui
+docker compose up --build
+```
+
+If you'd rather run it using Node.js and [vite](https://vitejs.dev/), then make sure you have Node.js installed and run the following commands:
+
+```bash
+cd flight-ui
+npm install
+npm run build
+npm run preview
+```
+
+If you'd like to run it in dev mode instead you can skip the build:
+
+```bash
+cd flight-ui
+npm install
+npm run dev
+```
+
+In any of these cases, point your browser at http://localhost:8000 and you should see an aircraft map.
+
+## Wrapping up
+
+That's pretty much it. If you see a bug, a typo, or some small improvements, feel free to send a PR. If you see something big or would like to make major improvements, reach out and let's discuss it.
+
+I hope you find this fun and instructive. Happy spotting!
