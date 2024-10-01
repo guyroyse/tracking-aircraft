@@ -157,8 +157,7 @@ Now that we have the fiddly bits working, we can get the demo running. The demo 
 ```mermaid
 graph LR
   subgraph "Atlanta"
-    ANT1{Antenna} --> SDR1((SDR))
-    SDR1 --> DMP1[dump1090]
+    ANT1{Antenna & SDR} --> DMP1[dump1090]
     DMP1 --> ING1("Radio Ingestor")
   end
   subgraph "Columbus"
