@@ -164,8 +164,8 @@ graph LR
     DMP --> ING("Radio Ingestor")
   end
   ING --> RED[Redis]
+  RED --> SRV("Flight Server")
   subgraph "Consumer"
-    RED --> SRV("Flight Server")
     SRV --> RED
     SRV --> WEB("Flight UI")
     WEB --> SRV
