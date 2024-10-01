@@ -156,7 +156,7 @@ Now that we have the fiddly bits working, we can get the demo running. The demo 
 
 ```mermaid
 flowchart LR
-  A["Antenna"] --> B[SDR]
+  A{Antenna} --> B((SDR))
   B --> C["Radio Ingestor"]
   C --> D[Redis]
   D --> E["Flight Server"]
