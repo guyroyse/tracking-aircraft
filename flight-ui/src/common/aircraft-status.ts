@@ -2,6 +2,7 @@ import { AIRCRAFT_IDLE_TIME } from '../config'
 
 export type AircraftStatusData = {
   icaoId: string
+  dateTime: number
   lastUpdated: number
   callsign: string | null
   radio: string | null
@@ -20,6 +21,7 @@ export const AircraftStatus = {
   fromJSON: function (json: string): AircraftStatusData {
     const {
       icaoId,
+      dateTime,
       callsign,
       radio,
       latitude,
@@ -35,6 +37,7 @@ export const AircraftStatus = {
 
     const status: AircraftStatusData = {
       icaoId,
+      dateTime,
       lastUpdated: new Date().getTime(),
       callsign: callsign ?? null,
       radio: radio ?? null,
@@ -55,6 +58,7 @@ export const AircraftStatus = {
   merge: function (found: AircraftStatusData, received: AircraftStatusData): AircraftStatusData {
     return {
       icaoId: received.icaoId,
+      dateTime: received.dateTime,
       lastUpdated: received.lastUpdated,
       callsign: received.callsign ?? found.callsign,
       radio: received.radio ?? found.radio,
