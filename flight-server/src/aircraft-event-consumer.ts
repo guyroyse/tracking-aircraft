@@ -1,4 +1,4 @@
-import { AIRCRAFT_STREAM_KEY } from './_config'
+import { AIRCRAFT_STREAM_BATCH_SIZE, AIRCRAFT_STREAM_BLOCK_TIMEOUT, AIRCRAFT_STREAM_KEY } from './_config'
 
 import { AircraftStatus } from './aircraft-status'
 import { redis, RedisClient } from './redis-client'
@@ -55,20 +55,20 @@ export class AircraftEventConsumer {
     let currentId = '$'
 
     while (true) {
-      const event = await this.fetchNextEvent(currentId)
-      if (event) {
+      const events = await this.fetchBlockOfEvents(currentId)
+      for (const event of events) {
         yield event
         currentId = this.extractId(event)
       }
     }
   }
 
-  private async fetchNextEvent(id: string): Promise<StreamEvent | null> {
+  private async fetchBlockOfEvents(id: string): Promise<StreamEvent[]> {
     const readStream = { key: AIRCRAFT_STREAM_KEY, id }
-    const options = { BLOCK: 1000, COUNT: 1 }
+    const options = { BLOCK: AIRCRAFT_STREAM_BLOCK_TIMEOUT, COUNT: AIRCRAFT_STREAM_BATCH_SIZE }
     const events = await this.redis.xRead(readStream, options)
 
-    return events === null || events.length === 0 ? null : (events[0] as StreamEvent)
+    return events ?? []
   }
 
   private extractId(event: StreamEvent): string {

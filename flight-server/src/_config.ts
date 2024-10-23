@@ -7,6 +7,8 @@ export const REDIS_PASSWORD: string | undefined = process.env['REDIS_PASSWORD']
 
 /* event stream */
 export const AIRCRAFT_STREAM_KEY: string = process.env['AIRCRAFT_STREAM_KEY'] ?? 'radio:events'
+export const AIRCRAFT_STREAM_BATCH_SIZE: number = Number(process.env['AIRCRAFT_STREAM_BATCH_SIZE'] ?? 100)
+export const AIRCRAFT_STREAM_BLOCK_TIMEOUT: number = Number(process.env['AIRCRAFT_STREAM_BLOCK_TIMEOUT'] ?? 1000)
 
 /* TTL for aircraft status */
 export const AIRCRAFT_STATUS_TTL: number = Number(process.env['AIRCRAFT_STATUS_TTL'] ?? 3600)
