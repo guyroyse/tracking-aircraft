@@ -57,8 +57,25 @@ export class AircraftEventConsumer {
     while (true) {
       const events = await this.fetchBlockOfEvents(currentId)
       for (const event of events) {
+        const icaoId = event.messages[0]?.message.icaoId
+        const dateTime = Number(event.messages[0]?.message.loggedDateTime) + 4 * 60 * 60 * 1000
+        const dateTimeString = new Date(dateTime).toLocaleTimeString()
+
+        const now = new Date().getTime()
+        const nowString = new Date(now).toLocaleTimeString()
+        const diff = now - dateTime
+
+        console.log(`ICAO: ${icaoId} Status: ${dateTimeString} Current: ${nowString} Diff: ${diff}ms`)
+
         yield event
-        currentId = this.extractId(event)
+
+        // HACK
+        // This is commented out to prevent the consumer from lagging too far behind the producer. However,
+        // this will cause the consumer to miss events if the producer is too fast. As aircraft transponders
+        // produce 100s of messages a second, only far away aircraft will be missed. During period of low
+        // traffic, the consumer could process the same message multiple times making aircraft sticky.
+
+        // currentId = this.extractId(event)
       }
     }
   }
