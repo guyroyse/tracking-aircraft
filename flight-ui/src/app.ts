@@ -21,6 +21,20 @@ navigator.geolocation.getCurrentPosition((position: GeolocationPosition) => {
 let ws: WebSocket = new WebSocket(FLIGHT_SERVER_WS)
 ws.onmessage = (event: MessageEvent) => {
   const receivedStatus = AircraftStatus.fromJSON(event.data)
+
+  // log time from status and actual time for ICAO
+  const icaoId = receivedStatus.icaoId
+
+  // temp hack for four hours in the future because SBS1 reports in local time but in a UTC sort of way
+  const dateTime = receivedStatus.dateTime + 4 * 60 * 60 * 1000
+
+  const dateTimeString = new Date(dateTime).toLocaleTimeString()
+  const now = new Date().getTime()
+  const nowString = new Date(now).toLocaleTimeString()
+  const diff = now - dateTime
+
+  console.log(`ICAO: ${icaoId} Status: ${dateTimeString} Current: ${nowString} Diff: ${diff}ms`)
+
   addOrUpdateAircraft(receivedStatus)
 }
 
