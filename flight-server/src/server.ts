@@ -10,11 +10,11 @@ import {
 
 import { AircraftEventConsumer } from './aircraft-event-consumer'
 import { FlightWebServer } from './flight-web-server'
-import { FlightWebSockerServer } from './flight-web-socket-server'
+import { FlightWebSocketServer } from './flight-web-socket-server'
 import { redis } from './redis-client'
 
 const webServer = FlightWebServer.create().start()
-const webSockerServer = FlightWebSockerServer.create(webServer.server)
+const webSocketServer = FlightWebSocketServer.create(webServer.server)
 const consumer = await AircraftEventConsumer.create()
 
 /* Set up data structures for aircraft data. */
@@ -56,8 +56,7 @@ consumer.registerHandler(async aircraft => {
   if (climb) aircraft.climbPercentile = await fetchPercentile(CLIMB_DIGEST, climb)
 
   // Send the aircraft data to the connected clients.
-  const json = JSON.stringify(aircraft)
-  webSockerServer.sockets.forEach(s => s.send(json))
+  webSocketServer.sendAircraftStatus(aircraft)
 })
 
 consumer.start()
