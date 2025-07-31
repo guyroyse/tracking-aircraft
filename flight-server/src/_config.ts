@@ -13,6 +13,12 @@ export const AIRCRAFT_STREAM_BLOCK_TIMEOUT: number = Number(process.env['AIRCRAF
 /* TTL for aircraft status */
 export const AIRCRAFT_STATUS_TTL: number = Number(process.env['AIRCRAFT_STATUS_TTL'] ?? 3600)
 
+/* Aircraft status polling interval in milliseconds */
+export const AIRCRAFT_STATUS_POLLING_INTERVAL: number = Number(process.env['AIRCRAFT_STATUS_POLLING_INTERVAL'] ?? 100)
+
+/* Maximum number of aircraft to fetch in a single FT.SEARCH query */
+export const AIRCRAFT_STATUS_MAX_RESULTS: number = Number(process.env['AIRCRAFT_STATUS_MAX_RESULTS'] ?? 1000)
+
 /* flight server options */
 export const FLIGHT_SERVER_PORT: number = Number(process.env['FLIGHT_SERVER_PORT'] ?? 8080)
 

@@ -9,6 +9,7 @@ import {
 } from './_config'
 
 import { AircraftEventConsumer } from './aircraft-event-consumer'
+import { AircraftStatusPoller } from './aircraft-status-poller'
 import { FlightWebServer } from './flight-web-server'
 import { FlightWebSocketServer } from './flight-web-socket-server'
 import { redis } from './redis-client'
@@ -16,6 +17,7 @@ import { redis } from './redis-client'
 const webServer = FlightWebServer.create().start()
 const webSocketServer = FlightWebSocketServer.create(webServer.server)
 const consumer = await AircraftEventConsumer.create()
+const poller = await AircraftStatusPoller.create()
 
 /* Set up data structures for aircraft data. */
 createTDigest(ALTITUDE_DIGEST)
@@ -47,10 +49,13 @@ consumer.registerHandler(async aircraft => {
   redis.incr(MESSAGE_COUNT)
 })
 
+consumer.start()
+
 /* Send the current aircraft data to the connected clients. */
-consumer.registerHandler(async aircraft => {
-  // Enrich the aircraft data with percentiles.
+poller.registerHandler(async aircraft => {
   const { altitude, velocity, climb } = aircraft
+  
+  // Enrich the aircraft data with percentiles.
   if (altitude) aircraft.altitudePercentile = await fetchPercentile(ALTITUDE_DIGEST, altitude)
   if (velocity) aircraft.velocityPercentile = await fetchPercentile(VELOCITY_DIGEST, velocity)
   if (climb) aircraft.climbPercentile = await fetchPercentile(CLIMB_DIGEST, climb)
@@ -59,7 +64,7 @@ consumer.registerHandler(async aircraft => {
   webSocketServer.sendAircraftStatus(aircraft)
 })
 
-consumer.start()
+poller.start()
 
 async function createTDigest(key: string) {
   const exists = await redis.exists(key)

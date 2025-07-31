@@ -1,6 +1,6 @@
 import { AIRCRAFT_STREAM_BATCH_SIZE, AIRCRAFT_STREAM_BLOCK_TIMEOUT, AIRCRAFT_STREAM_KEY } from './_config'
 
-import { AircraftStatus } from './aircraft-status'
+import { AircraftStatus, AircraftStatusHandler } from './aircraft-status'
 import { redis, RedisClient } from './redis-client'
 
 type StreamMessage = {
@@ -14,8 +14,6 @@ type StreamEvent = {
   name: string
   messages: StreamMessage[]
 }
-
-export type AircraftStatusHandler = (aircraft: AircraftStatus) => Promise<void>
 
 export class AircraftEventConsumer {
   private redis: RedisClient
@@ -34,14 +32,12 @@ export class AircraftEventConsumer {
     this.redis = redis
   }
 
-  registerHandler(handler: AircraftStatusHandler) {
+  registerHandler(handler: AircraftStatusHandler): void {
     this.handlers.add(handler)
-    return this
   }
 
-  unregisterHandler(handler: AircraftStatusHandler) {
+  unregisterHandler(handler: AircraftStatusHandler): void {
     this.handlers.delete(handler)
-    return this
   }
 
   async start() {
@@ -65,17 +61,10 @@ export class AircraftEventConsumer {
         const nowString = new Date(now).toLocaleTimeString()
         const diff = now - dateTime
 
-        console.log(`ICAO: ${icaoId} Status: ${dateTimeString} Current: ${nowString} Diff: ${diff}ms`)
 
         yield event
 
-        // HACK
-        // This is commented out to prevent the consumer from lagging too far behind the producer. However,
-        // this will cause the consumer to miss events if the producer is too fast. As aircraft transponders
-        // produce 100s of messages a second, only far away aircraft will be missed. During period of low
-        // traffic, the consumer could process the same message multiple times making aircraft sticky.
-
-        // currentId = this.extractId(event)
+        currentId = this.extractId(event)
       }
     }
   }

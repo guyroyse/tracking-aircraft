@@ -15,3 +15,5 @@ export type AircraftStatus = {
   climbPercentile?: number
   onGround?: boolean
 }
+
+export type AircraftStatusHandler = (aircraft: AircraftStatus) => Promise<void>

@@ -1,6 +1,6 @@
 services:
   redis:
-    image: redis/redis-stack-server:latest
+    image: redis:latest
     ports:
       - "6379:6379"
   radio-ingestor:
